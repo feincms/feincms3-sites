@@ -98,8 +98,8 @@ class AbstractPage(BasePage):
         verbose_name_plural = _('pages')
 
     def save(self, *args, **kwargs):
-        if self.parent_id and self.parent.site:
-            self.site = self.parent.site
+        if self.parent_id and self.parent.site_id:
+            self.site_id = self.parent.site_id
         super().save(*args, **kwargs)
     save.alters_data = True
 
