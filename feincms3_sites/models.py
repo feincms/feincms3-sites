@@ -10,9 +10,6 @@ from feincms3.pages import AbstractPage as BasePage
 
 
 class SiteQuerySet(models.QuerySet):
-    def default(self):
-        return self.filter(is_default=True).first()
-
     def for_host(self, host):
         default = None
         for site in self.order_by('-is_default'):
