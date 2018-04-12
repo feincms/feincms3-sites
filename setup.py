@@ -42,7 +42,7 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'Django>=1.11',
-        'feincms3',
+        # 'Django>=1.11',
+        'feincms3>=0.21.2',
     ],
 )
