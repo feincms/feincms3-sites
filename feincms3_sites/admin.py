@@ -12,7 +12,7 @@ class SiteAdmin(admin.ModelAdmin):
             'fields': ('is_default', 'host'),
         }),
         (capfirst(_('advanced')), {
-            'fields': ('host_re',),
+            'fields': ('is_managed_re', 'host_re',),
             'classes': ('collapse',),
         }),
     ]

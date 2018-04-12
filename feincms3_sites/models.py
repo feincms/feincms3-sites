@@ -32,6 +32,11 @@ class Site(models.Model):
         _('host'),
         max_length=200,
     )
+    is_managed_re = models.BooleanField(
+        _('manage the host regex'),
+        default=True,
+        help_text=_('Deactivate this to specify the regex yourself.'),
+    )
     host_re = models.CharField(
         _('host regular expression'),
         max_length=200,
@@ -58,7 +63,7 @@ class Site(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        if not self.host_re:
+        if self.is_managed_re:
             self.host_re = r'^%s$' % re.escape(self.host)
         super().save(*args, **kwargs)
     save.alters_data = True

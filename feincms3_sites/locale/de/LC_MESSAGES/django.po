@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-12 11:43+0200\n"
+"POT-Creation-Date: 2018-04-12 11:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "advanced"
 msgstr "Fortgeschritten"
 
-#: apps.py:8 models.py:45 models.py:71
+#: apps.py:8 models.py:50 models.py:76
 msgid "sites"
 msgstr "Webseiten"
 
@@ -35,33 +35,41 @@ msgid "host"
 msgstr "Domainname"
 
 #: models.py:36
+msgid "manage the host regex"
+msgstr "Domain-Regex verwalten"
+
+#: models.py:38
+msgid "Deactivate this to specify the regex yourself."
+msgstr "Deaktivieren, um die Domain-Regex selbst zu setzen."
+
+#: models.py:41
 msgid "host regular expression"
 msgstr "Domain-Regex"
 
-#: models.py:44
+#: models.py:49
 msgid "site"
 msgstr "Webseite"
 
-#: models.py:57
+#: models.py:62
 msgid "Only one site can be the default site."
 msgstr "Nur eine Webseite kann die Standard-Webseite sein."
 
-#: models.py:77
+#: models.py:82
 msgid "path"
 msgstr "Pfad"
 
-#: models.py:80
+#: models.py:85
 msgid "Generated automatically if 'static path' is unset."
 msgstr "Automatisch generiert falls 'statischer Pfad' nicht gesetzt ist."
 
-#: models.py:84
+#: models.py:89
 msgid "Path must start and end with a slash (/)."
 msgstr "Pfad muss mit einem Slash (/) starten und enden."
 
-#: models.py:92
+#: models.py:97
 msgid "page"
 msgstr "Seite"
 
-#: models.py:93
+#: models.py:98
 msgid "pages"
 msgstr "Seiten"
