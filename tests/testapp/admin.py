@@ -41,6 +41,7 @@ class PageAdmin(ContentEditor, TreeAdmin):
         }),
         (capfirst(_('path')), {
             'fields': (
+                'site',
                 'slug',
                 'static_path',
                 'path',
