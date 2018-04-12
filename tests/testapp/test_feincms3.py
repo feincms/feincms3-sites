@@ -1,12 +1,14 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
+from django.urls import set_urlconf
 from django.utils import six
 from django.utils.translation import deactivate_all, override
 
 from feincms3.apps import (
     NoReverseMatch, apps_urlconf, reverse, reverse_any, reverse_fallback,
 )
+from feincms3_sites.middleware import apps_urlconf_for_site
 from feincms3_sites.models import Site
 
 from .models import Article, Page
@@ -379,4 +381,46 @@ class Test(TestCase):
         page2.redirect_to_page = page2
         self.assertRaises(ValidationError, page2.full_clean)
 
-    # TODO Test that app added to a different site is not available here
+    def test_site_apps(self):
+        """Test that apps are only available inside their sites"""
+
+        page = Page.objects.create(
+            title='blog',
+            slug='blog',
+            static_path=False,
+            language_code='en',
+            is_active=True,
+            application='blog',
+            site=Site.objects.create(host='testserver2')
+        )
+        a = Article.objects.create(
+            title='article',
+            category='blog',
+        )
+
+        # No urlconf.
+        self.assertRaises(
+            NoReverseMatch,
+            a.get_absolute_url,
+        )
+
+        # No apps on this site
+        self.assertEqual(
+            apps_urlconf_for_site(self.test_site),
+            'testapp.urls',
+        )
+        # Apps on this site
+        self.assertEqual(
+            apps_urlconf_for_site(page.site),
+            'urlconf_01c07a48384868b2300536767c9879e2',
+        )
+
+        try:
+            set_urlconf('urlconf_01c07a48384868b2300536767c9879e2')
+            self.assertEqual(
+                a.get_absolute_url(),
+                '/blog/%s/' % a.pk,
+            )
+
+        finally:
+            set_urlconf(None)
