@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+{% load menus %}
+<html>
+<head>
+  <title>{% block title %}testapp{% endblock %}</title>
+</head>
+<body>
+
+  {% menus as menus %}
+  <nav class="nav-main">
+  {% for main, children in menus.main|group_by_tree %}
+
+    <a {% if page and main.id in page.cte_path %}class="active"{% endif %} href="{{ main.get_absolute_url }}">{{ main.title }}</a>
+
+      {% if children %}
+      <nav>
+        {% for child in children %}
+          <a {% if page and child.id in page.cte_path %}class="active"{% endif %} href="{{ child.get_absolute_url }}">{{ child.title }}</a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+
+  {% endfor %}
+  </nav>
+
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+  {% block content %}{% endblock %}
+</body>
+</html>

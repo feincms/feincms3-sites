@@ -45,11 +45,4 @@ setup(
         'Django>=1.11',
         'feincms3',
     ],
-    extras_require={
-        'tests': [
-            'pytest~=3.3',
-            'pytest-django~=3.1',
-            'coverage~=4.4',
-        ],
-    },
 )
