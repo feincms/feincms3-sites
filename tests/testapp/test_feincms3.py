@@ -38,6 +38,7 @@ class Test(TestCase):
 
         self.test_site = Site.objects.create(
             host='testserver',
+            is_default=True,
         )
 
     def login(self):
@@ -424,3 +425,50 @@ class Test(TestCase):
 
         finally:
             set_urlconf(None)
+
+    def test_site_model(self):
+        """Test various aspects of the Site model"""
+        # No problems
+        self.test_site.full_clean()
+
+        self.assertRaises(
+            ValidationError,
+            Site(is_default=True).full_clean,
+        )
+
+        s2 = Site.objects.create(
+            host='testserver2',
+            host_re=r'^testserver.*$',
+        )
+
+        # No fails.
+        s2.full_clean()
+        self.assertEqual(str(s2), 'testserver2')
+
+        # Overridden
+        self.assertEqual(s2.host_re, r'^testserver2$')
+
+        s3 = Site.objects.create(
+            host='testserver3',
+            host_re=r'^testserver.*$',
+            is_managed_re=False,
+        )
+
+        self.assertEqual(s3.host_re, r'^testserver.*$')
+
+        self.assertEqual(
+            Site.objects.for_host('testserver'),
+            self.test_site,
+        )
+        self.assertEqual(
+            Site.objects.for_host('testserver2'),
+            s2,
+        )
+        self.assertEqual(
+            Site.objects.for_host('testserver-anything'),
+            s3,
+        )
+        self.assertEqual(
+            Site.objects.for_host('anything'),
+            self.test_site,
+        )
