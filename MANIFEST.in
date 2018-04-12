@@ -1,0 +1,6 @@
+include LICENSE
+include MANIFEST.in
+include README.rst
+recursive-include feincms3_sites/static *
+recursive-include feincms3_sites/locale *
+recursive-include feincms3_sites/templates *
