@@ -66,8 +66,14 @@ class Site(models.Model):
     save.alters_data = True
 
 
+class SiteForeignKey(models.ForeignKey):
+    def formfield(self, **kwargs):
+        kwargs['required'] = False
+        return super().formfield(**kwargs)
+
+
 class AbstractPage(BasePage):
-    site = models.ForeignKey(
+    site = SiteForeignKey(
         Site,
         on_delete=models.CASCADE,
         verbose_name=_('sites'),

@@ -83,6 +83,63 @@ class Test(TestCase):
             1,
         )
 
+        response = client.post(
+            '/admin/testapp/page/add/',
+            merge_dicts(
+                {
+                    'title': 'subpage 1',
+                    'slug': 'subpage-1',
+                    'parent': page.pk,
+                    # 'site': self.test_site.pk,
+                    'language_code': 'en',
+                    'application': '',
+                    'is_active': 1,
+                    'menu': 'main',
+                    'template_key': 'standard',
+                },
+                zero_management_form_data('testapp_snippet_set'),
+            ),
+        )
+
+        self.assertRedirects(
+            response,
+            '/admin/testapp/page/',
+        )
+
+        subpage1 = Page.objects.latest('id')
+        self.assertEqual(subpage1.path, '/en/subpage-1/')
+        # Site has been set to parent's site
+        self.assertEqual(subpage1.site, self.test_site)
+
+        site = Site.objects.create(host='testserver2')
+        response = client.post(
+            '/admin/testapp/page/add/',
+            merge_dicts(
+                {
+                    'title': 'subpage 2',
+                    'slug': 'subpage-2',
+                    'parent': page.pk,
+                    'site': site.pk,  # Wrong!
+                    'language_code': 'en',
+                    'application': '',
+                    'is_active': 1,
+                    'menu': 'main',
+                    'template_key': 'standard',
+                },
+                zero_management_form_data('testapp_snippet_set'),
+            ),
+        )
+
+        self.assertRedirects(
+            response,
+            '/admin/testapp/page/',
+        )
+
+        subpage2 = Page.objects.latest('id')
+        self.assertEqual(subpage2.path, '/en/subpage-2/')
+        # Site has been reset to parent's site
+        self.assertEqual(subpage2.site, self.test_site)
+
     def test_apps(self):
         """Article app test (two instance namespaces, two languages)"""
 
@@ -321,3 +378,5 @@ class Test(TestCase):
         # No redirects to self
         page2.redirect_to_page = page2
         self.assertRaises(ValidationError, page2.full_clean)
+
+    # TODO Test that app added to a different site is not available here

@@ -4,7 +4,7 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'feincms3-sites',
+        'NAME': 'feincms3_sites',
     }
 }
 
