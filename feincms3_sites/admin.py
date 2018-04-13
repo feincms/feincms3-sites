@@ -16,5 +16,5 @@ class SiteAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     ]
-    list_display = ('host', 'is_default', 'host_re')
+    list_display = ('host', 'is_default', 'is_managed_re', 'host_re')
     ordering = ('-is_default',)
