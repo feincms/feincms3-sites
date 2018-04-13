@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.http import Http404
 
 from feincms3.apps import (
     AppsMiddleware as BaseMiddleware, AppsMixin, apps_urlconf,
@@ -26,5 +27,7 @@ class AppsMiddleware(BaseMiddleware):
 
     def __call__(self, request):
         request.site = Site.objects.for_host(request.get_host())
+        if request.site is None:
+            raise Http404('No configuration found for %r' % request.get_host())
         request.urlconf = apps_urlconf_for_site(request.site)
         return self.get_response(request)
