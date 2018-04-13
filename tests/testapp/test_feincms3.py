@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 from django.urls import set_urlconf
 from django.utils import six
 from django.utils.translation import deactivate_all, override
@@ -478,4 +479,69 @@ class Test(TestCase):
         self.assertEqual(
             Site.objects.for_host('anything'),
             None,
+        )
+
+    def test_404(self):
+        Page.objects.create(
+            title='home',
+            slug='home',
+            path='/de/',
+            static_path=True,
+            language_code='de',
+            is_active=True,
+            site=self.test_site,
+        )
+        self.assertContains(
+            self.client.get('/de/'),
+            'home - testapp',
+        )
+
+        self.test_site.is_default = False
+        self.test_site.host = 'testserver2'
+        self.test_site.save()
+
+        self.assertEqual(
+            self.client.get('/de/').status_code,
+            404,
+        )
+
+
+@override_settings(MIDDLEWARE=[
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'feincms3_sites.middleware.SiteMiddleware',
+])
+class SiteMiddlewareTest(TestCase):
+    def test_404(self):
+        test_site = Site.objects.create(
+            host='testserver',
+            is_default=True,
+        )
+        Page.objects.create(
+            title='home',
+            slug='home',
+            path='/de/',
+            static_path=True,
+            language_code='de',
+            is_active=True,
+            site=test_site,
+        )
+        self.assertContains(
+            self.client.get('/de/'),
+            'home - testapp',
+        )
+
+        test_site.is_default = False
+        test_site.host = 'testserver2'
+        test_site.save()
+
+        self.assertEqual(
+            self.client.get('/de/').status_code,
+            404,
         )

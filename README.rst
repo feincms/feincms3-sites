@@ -29,15 +29,8 @@ Installation and usage
 - If you're using feincms3 apps currently, replace
   ``feincms3.apps.AppsMiddleware`` with
   ``feincms3_sites.middleware.AppsMiddleware`` in your ``MIDDLEWARE``.
-  Otherwise, add your own middleware so that a ``Site`` model instance
-  will be available as ``request.site`` in your views::
-
-    def sites(get_response):
-        def middleware(request):
-            request.site = Site.objects.for_host(request.get_host())
-            return get_response(request)
-        return middleware
-
+  Otherwise, you may want to add
+  ``feincms3_sites.middleware.SiteMiddleware`` near the top.
 - Uses of ``apps_urlconf()`` in your own code (improbable!) have to be
   replaced by ``feincms3_sites.middleware.apps_urlconf_for_site(site)``.
 - ``Page.objects.active()`` does not automatically filter by site,
