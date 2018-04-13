@@ -10,6 +10,12 @@ from feincms3.pages import AbstractPage as BasePage
 
 
 class SiteQuerySet(models.QuerySet):
+    """
+    Return a site instance for the passed host, or ``None`` if there is no
+    match and no default site.
+
+    The default site's host regex is tested first.
+    """
     def for_host(self, host):
         default = None
         for site in self.order_by('-is_default'):
@@ -67,6 +73,10 @@ class Site(models.Model):
 
 
 class SiteForeignKey(models.ForeignKey):
+    """
+    The site foreign key field should not be required, so that we can fill in
+    a value from the parent.
+    """
     def formfield(self, **kwargs):
         kwargs['required'] = False
         return super().formfield(**kwargs)
@@ -122,21 +132,3 @@ class AbstractPage(BasePage):
             self.site_id = self.parent.site_id
         super().save(*args, **kwargs)
     save.alters_data = True
-
-    '''
-    def get_absolute_url(self):
-        """
-        Return the page's absolute URL using ``reverse()``
-
-        If path is ``/``, reverses ``pages:root`` without any arguments,
-        alternatively reverses ``pages:page`` with an argument of ``path``.
-        Note that this ``path`` is not the same as ``self.path`` -- slashes
-        are stripped from the beginning and the end of the string to make
-        building an URLconf more straightforward.
-        """
-        if self.path == '/':
-            return reverse('pages:root')
-        return reverse('pages:page', kwargs={
-            'path': self.path.strip('/'),
-        })
-    '''
