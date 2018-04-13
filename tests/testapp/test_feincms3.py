@@ -144,6 +144,34 @@ class Test(TestCase):
         # Site has been reset to parent's site
         self.assertEqual(subpage2.site, self.test_site)
 
+    def test_root_without_site(self):
+        """Create a root page without selecting a site instance should show
+        validation errors"""
+        client = self.login()
+        response = client.post(
+            '/admin/testapp/page/add/',
+            merge_dicts(
+                {
+                    'title': 'Home EN',
+                    'slug': 'home-en',
+                    'path': '/en/',
+                    # 'site': self.test_site.pk,
+                    'static_path': 1,
+                    'language_code': 'en',
+                    'application': '',
+                    'is_active': 1,
+                    'menu': 'main',
+                    'template_key': 'standard',
+                },
+                zero_management_form_data('testapp_snippet_set'),
+            ),
+        )
+        # print(response.content.decode('utf-8'))
+        self.assertContains(
+            response,
+            'The site is required when creating root nodes.'
+        )
+
     def test_apps(self):
         """Article app test (two instance namespaces, two languages)"""
 

@@ -100,6 +100,23 @@ class AbstractPage(BasePage):
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 
+    def clean_fields(self, exclude=None):
+        """
+        Since the ``SiteForeignKey`` adds ``required=False`` we have to add
+        our own check here.
+        """
+        exclude = [] if exclude is None else exclude
+        super().clean_fields(exclude)
+
+        if not self.site_id and not self.parent_id:
+            # Using validation_error() does not work as it should, because
+            # 'site' is always part of exclude, because the model field is
+            # required, but the form field is not, therefore Django adds
+            # 'site' into 'exclude' unconditionally.
+            raise ValidationError(_(
+                'The site is required when creating root nodes.'
+            ))
+
     def save(self, *args, **kwargs):
         if self.parent_id and self.parent.site_id:
             self.site_id = self.parent.site_id
