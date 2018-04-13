@@ -86,7 +86,7 @@ class AbstractPage(BasePage):
     site = SiteForeignKey(
         Site,
         on_delete=models.CASCADE,
-        verbose_name=_('sites'),
+        verbose_name=_('site'),
         related_name='+',
     )
     # Exactly the same as BasePage.path,

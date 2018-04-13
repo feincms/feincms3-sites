@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 ('path', models.CharField(blank=True, help_text="Generated automatically if 'static path' is unset.", max_length=1000, validators=[django.core.validators.RegexValidator(message='Path must start and end with a slash (/).', regex='^/(|.+/)$')], verbose_name='path')),
                 ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='testapp.Page')),
                 ('redirect_to_page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='testapp.Page', verbose_name='Redirect to page')),
-                ('site', feincms3_sites.models.SiteForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='feincms3_sites.Site', verbose_name='sites')),
+                ('site', feincms3_sites.models.SiteForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='feincms3_sites.Site', verbose_name='site')),
             ],
             options={
                 'verbose_name': 'page',

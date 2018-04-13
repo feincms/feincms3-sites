@@ -12,6 +12,8 @@ Change log
   apps.
 - Fixed a bug where creating a root page without a site would crash
   insteaf of showing the field required validation error.
+- Fixed the ``verbose_name`` of the site foreign key (it only points to
+  a single site).
 
 
 `0.1`_ (2018-04-12)
