@@ -472,3 +472,10 @@ class Test(TestCase):
             Site.objects.for_host('anything'),
             self.test_site,
         )
+
+        # No default site:
+        self.test_site.delete()
+        self.assertEqual(
+            Site.objects.for_host('anything'),
+            None,
+        )
