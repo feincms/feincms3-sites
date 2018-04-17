@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
@@ -31,7 +32,10 @@ def merge_dicts(*dicts):
     return res
 
 
-class Test(TestCase):
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
+    'feincms3_sites.middleware.AppsMiddleware',
+])
+class AppsMiddlewareTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_superuser(
             'admin', 'admin@test.ch', 'blabla')
@@ -534,15 +538,7 @@ class Test(TestCase):
         )
 
 
-@override_settings(MIDDLEWARE=[
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
     'feincms3_sites.middleware.SiteMiddleware',
 ])
 class SiteMiddlewareTest(TestCase):
