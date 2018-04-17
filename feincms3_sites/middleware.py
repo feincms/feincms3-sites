@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured, MiddlewareNotUsed
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.http import Http404, HttpResponsePermanentRedirect
 from django.middleware.security import SecurityMiddleware
@@ -49,9 +49,6 @@ class CanonicalDomainMiddleware(SecurityMiddleware):
 
     def __init__(self, get_response):
         super().__init__(get_response)
-        if settings.DEBUG:
-            raise MiddlewareNotUsed
-
         self.canonical_domain_secure = getattr(
             settings,
             'CANONICAL_DOMAIN_SECURE',

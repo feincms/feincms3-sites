@@ -5,6 +5,11 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Also activated ``CanonicalDomainMiddleware`` when ``DEBUG = True``.
+  If you do not want redirects when debugging, do not add the middleware
+  to ``MIDDLEWARE`` in this case.
+
+
 `0.2`_ (2018-04-17)
 ~~~~~~~~~~~~~~~~~~~
 
