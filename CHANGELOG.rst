@@ -14,6 +14,11 @@ Change log
   insteaf of showing the field required validation error.
 - Fixed the ``verbose_name`` of the site foreign key (it only points to
   a single site).
+- Added a ``CanonicalDomainMiddleware`` which works the same way as the
+  middleware in `django-canonical-domain
+  <https://github.com/matthiask/django-canonical-domain>`_, except that
+  it takes the site from a previous ``AppsMiddleware`` or
+  ``SiteMiddleware`` instead of from a ``CANONICAL_DOMAIN`` setting.
 
 
 `0.1`_ (2018-04-12)

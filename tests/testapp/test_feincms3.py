@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import set_urlconf
@@ -568,4 +568,98 @@ class SiteMiddlewareTest(TestCase):
         self.assertEqual(
             self.client.get('/de/').status_code,
             404,
+        )
+
+
+class CanonicalDomainMiddlewareTest(TestCase):
+    def setUp(self):
+        self.test_site = Site.objects.create(
+            host='example.com',
+            is_default=True,
+        )
+        Page.objects.create(
+            title='home',
+            slug='home',
+            path='/de/',
+            static_path=True,
+            language_code='de',
+            is_active=True,
+            site=self.test_site,
+        )
+
+
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
+    'feincms3_sites.middleware.SiteMiddleware',
+    'feincms3_sites.middleware.CanonicalDomainMiddleware',
+])
+class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
+    def test_request(self):
+        self.assertContains(
+            self.client.get('/de/', HTTP_HOST='example.com'),
+            'home - testapp',
+        )
+
+
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
+    'feincms3_sites.middleware.CanonicalDomainMiddleware',
+])
+class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
+    def test_request(self):
+        with six.assertRaisesRegex(
+                self,
+                ImproperlyConfigured,
+                'No "site" attribute on request.',
+        ):
+            self.client.get('/de/', HTTP_HOST='example.com')
+
+
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
+    'feincms3_sites.middleware.SiteMiddleware',
+    'feincms3_sites.middleware.CanonicalDomainMiddleware',
+])
+class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
+    def test_http_requests(self):
+        response = self.client.get('/', HTTP_HOST='example.org')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'http://example.com/')
+
+        self.assertContains(
+            self.client.get('/de/', HTTP_HOST='example.com'),
+            'home - testapp',
+        )
+
+    def test_https_requests(self):
+        response = self.client.get('/', HTTP_HOST='example.org', secure=True)
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/')
+
+        self.assertContains(
+            self.client.get('/de/', HTTP_HOST='example.com', secure=True),
+            'home - testapp',
+        )
+
+
+@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
+    'feincms3_sites.middleware.SiteMiddleware',
+    'feincms3_sites.middleware.CanonicalDomainMiddleware',
+], CANONICAL_DOMAIN_SECURE=True)
+class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
+    def test_http_redirects(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/')
+
+        response = self.client.get('/', HTTP_HOST='example.org')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/')
+
+    def test_https_redirects(self):
+        response = self.client.get('/', HTTP_HOST='example.org', secure=True)
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.com/')
+
+    def test_match(self):
+        self.assertContains(
+            self.client.get('/de/', HTTP_HOST='example.com', secure=True),
+            'home - testapp',
         )
