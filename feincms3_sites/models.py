@@ -110,6 +110,13 @@ class AbstractPage(BasePage):
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 
+    def _path_clash_candidates(self):
+        return self.__class__._default_manager.exclude(
+            ~Q(site=self.site_id) |
+            Q(pk__in=self.descendants()) |
+            Q(pk=self.pk),
+        )
+
     def clean_fields(self, exclude=None):
         """
         Since the ``SiteForeignKey`` adds ``required=False`` we have to add

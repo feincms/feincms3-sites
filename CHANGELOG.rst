@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Fixed a bug where path uniqueness was erroneously checked across
+  websites.
+
+
 `0.3`_ (2018-04-18)
 ~~~~~~~~~~~~~~~~~~~
 
