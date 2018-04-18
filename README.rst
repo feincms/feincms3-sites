@@ -27,13 +27,19 @@ Installation and usage
   that our ``AbstractPage`` has an additional ``site`` foreign key, and
   path uniqueness is enforced per-site.
 - If you're using feincms3 apps currently, replace
-  ``feincms3.apps.AppsMiddleware`` with
-  ``feincms3_sites.middleware.AppsMiddleware`` in your ``MIDDLEWARE``.
+  ``feincms3.apps.apps_middleware`` with
+  ``feincms3_sites.middleware.apps_middleware`` in your ``MIDDLEWARE``.
   Otherwise, you may want to add
-  ``feincms3_sites.middleware.SiteMiddleware`` near the top.
+  ``feincms3_sites.middleware.site_middleware`` near the top.
 - Uses of ``apps_urlconf()`` in your own code (improbable!) have to be
   replaced by ``feincms3_sites.middleware.apps_urlconf_for_site(site)``.
 - ``Page.objects.active()`` does not automatically filter by site,
   you'll have to do this yourself in your views code, navigation
   template tags etc. The site instance (if any could be found) is always
   available as ``request.site``.
+- If you want to automatically redirect requests to the current site,
+  insert ``feincms3_sites.middleware.redirect_to_site_middleware`` after
+  one of the other middleware referenced above. You may also set
+  ``SecurityMiddleware``'s ``SECURE_SSL_REDIRECT = True`` to enforce
+  SSL. In this case, insert ``redirect_to_site_middleware`` before the
+  ``SecurityMiddleware``.

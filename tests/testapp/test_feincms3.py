@@ -33,7 +33,7 @@ def merge_dicts(*dicts):
 
 
 @override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.AppsMiddleware',
+    'feincms3_sites.middleware.apps_middleware',
 ])
 class AppsMiddlewareTest(TestCase):
     def setUp(self):
@@ -539,7 +539,7 @@ class AppsMiddlewareTest(TestCase):
 
 
 @override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.SiteMiddleware',
+    'feincms3_sites.middleware.site_middleware',
 ])
 class SiteMiddlewareTest(TestCase):
     def test_404(self):
@@ -588,10 +588,12 @@ class CanonicalDomainMiddlewareTest(TestCase):
         )
 
 
-@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.SiteMiddleware',
-    'feincms3_sites.middleware.CanonicalDomainMiddleware',
-])
+@override_settings(
+    MIDDLEWARE=[
+        'feincms3_sites.middleware.site_middleware',
+        'feincms3_sites.middleware.redirect_to_site_middleware',
+    ] + settings.MIDDLEWARE,
+)
 class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
     def test_request(self):
         self.assertContains(
@@ -600,9 +602,11 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
         )
 
 
-@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.CanonicalDomainMiddleware',
-])
+@override_settings(
+    MIDDLEWARE=[
+        'feincms3_sites.middleware.redirect_to_site_middleware',
+    ] + settings.MIDDLEWARE,
+)
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
         with six.assertRaisesRegex(
@@ -613,10 +617,12 @@ class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
             self.client.get('/de/', HTTP_HOST='example.com')
 
 
-@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.SiteMiddleware',
-    'feincms3_sites.middleware.CanonicalDomainMiddleware',
-])
+@override_settings(
+    MIDDLEWARE=[
+        'feincms3_sites.middleware.site_middleware',
+        'feincms3_sites.middleware.redirect_to_site_middleware',
+    ] + settings.MIDDLEWARE,
+)
 class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
     def test_http_requests(self):
         response = self.client.get('/', HTTP_HOST='example.org')
@@ -639,10 +645,13 @@ class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
         )
 
 
-@override_settings(MIDDLEWARE=settings.MIDDLEWARE + [
-    'feincms3_sites.middleware.SiteMiddleware',
-    'feincms3_sites.middleware.CanonicalDomainMiddleware',
-], CANONICAL_DOMAIN_SECURE=True)
+@override_settings(
+    MIDDLEWARE=[
+        'feincms3_sites.middleware.site_middleware',
+        'feincms3_sites.middleware.redirect_to_site_middleware',
+    ] + settings.MIDDLEWARE,
+    SECURE_SSL_REDIRECT=True,
+)
 class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
     def test_http_redirects(self):
         response = self.client.get('/')
@@ -663,3 +672,12 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
             self.client.get('/de/', HTTP_HOST='example.com', secure=True),
             'home - testapp',
         )
+
+    def test_other_site(self):
+        """SSL redirect happens, but stays on secondary domain"""
+        Site.objects.create(
+            host='example.org',
+        )
+        response = self.client.get('/', HTTP_HOST='example.org')
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response['Location'], 'https://example.org/')

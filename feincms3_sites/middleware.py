@@ -2,11 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 from django.http import Http404, HttpResponsePermanentRedirect
-from django.middleware.security import SecurityMiddleware
 
-from feincms3.apps import (
-    AppsMiddleware as BaseMiddleware, AppsMixin, apps_urlconf,
-)
+from feincms3.apps import AppsMixin, apps_urlconf
 from feincms3.utils import concrete_model
 
 from .models import Site
@@ -24,54 +21,44 @@ def apps_urlconf_for_site(site):
     return apps_urlconf(apps=apps)
 
 
-class SiteMiddleware(object):
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
+def site_middleware(get_response):
+    def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
             raise Http404('No configuration found for %r' % request.get_host())
-        return self.get_response(request)
+        return get_response(request)
+    return middleware
 
 
-class AppsMiddleware(BaseMiddleware):
-    def __call__(self, request):
+def apps_middleware(get_response):
+    def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
             raise Http404('No configuration found for %r' % request.get_host())
         request.urlconf = apps_urlconf_for_site(request.site)
-        return self.get_response(request)
+        return get_response(request)
+    return middleware
 
 
-class CanonicalDomainMiddleware(SecurityMiddleware):
-    canonical_domain_secure = None
-
-    def __init__(self, get_response):
-        super().__init__(get_response)
-        self.canonical_domain_secure = getattr(
-            settings,
-            'CANONICAL_DOMAIN_SECURE',
-            False,
-        )
-
-    def process_request(self, request):
+def redirect_to_site_middleware(get_response):
+    def middleware(request):
         if not hasattr(request, 'site'):
             raise ImproperlyConfigured(
-                'No "site" attribute on request. Insert SiteMiddleware'
-                ' or AppsMiddleware before CanonicalDomainMiddleware.'
+                'No "site" attribute on request. Insert site_middleware'
+                ' or apps_middleware before redirect_to_site_middleware.'
             )
 
-        matches = request.get_host() == request.site.host
-        if matches and self.canonical_domain_secure and request.is_secure():
-            return
-        elif matches and not self.canonical_domain_secure:
-            return
+        # Host matches, and either no HTTPS enforcement or already HTTPS
+        if request.get_host() == request.site.host and (
+                not settings.SECURE_SSL_REDIRECT or request.is_secure()
+        ):
+            return get_response(request)
 
         return HttpResponsePermanentRedirect('http%s://%s%s' % (
             's' if (
-                self.canonical_domain_secure or request.is_secure()
+                settings.SECURE_SSL_REDIRECT or request.is_secure()
             ) else '',
             request.site,
             request.get_full_path(),
         ))
+    return middleware
