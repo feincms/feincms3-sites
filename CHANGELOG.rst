@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`0.3`_ (2018-04-18)
+~~~~~~~~~~~~~~~~~~~
+
 - Converted middleware to function-based middleware and renamed them to
   conform to function naming.
 - Replaced ``CanonicalDomainMiddleware`` with a
@@ -40,4 +43,5 @@ Change log
 
 .. _0.1: https://github.com/matthiask/feincms3-sites/commit/e19c1ebef0
 .. _0.2: https://github.com/matthiask/feincms3-sites/compare/0.1...0.2
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.2...master
+.. _0.3: https://github.com/matthiask/feincms3-sites/compare/0.2...0.3
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.3...master
