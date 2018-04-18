@@ -13,9 +13,7 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def menus(context):
     menus = defaultdict(list)
-    pages = Page.objects.filter(
-        Q(is_active=True),
-        Q(site=context['request'].site),
+    pages = Page.objects.active(context['request'].site).filter(
         Q(language_code=get_language()),
         ~Q(menu=''),
     ).extra(

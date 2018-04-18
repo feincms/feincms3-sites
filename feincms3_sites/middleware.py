@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q
 from django.http import Http404, HttpResponsePermanentRedirect
 
 from feincms3.apps import AppsMixin, apps_urlconf
@@ -14,9 +13,8 @@ def apps_urlconf_for_site(site):
     fields = (
         'path', 'application', 'app_instance_namespace', 'language_code',
     )
-    apps = page_model.objects.active().filter(
-        Q(site=site),
-        ~Q(app_instance_namespace=''),
+    apps = page_model.objects.active(site).exclude(
+        app_instance_namespace='',
     ).values_list(*fields).order_by(*fields)
     return apps_urlconf(apps=apps)
 

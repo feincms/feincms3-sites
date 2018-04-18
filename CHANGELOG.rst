@@ -7,6 +7,9 @@ Change log
 
 - Fixed a bug where path uniqueness was erroneously checked across
   websites.
+- Replaced the default ``Page.objects.active()`` manager method with our
+  own ``Page.objects.active(site)`` so that filtering by site is less
+  easily forgotten.
 
 
 `0.3`_ (2018-04-18)

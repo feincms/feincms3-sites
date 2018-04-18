@@ -8,7 +8,7 @@ from django.utils import six
 from django.utils.translation import deactivate_all, override
 
 from feincms3.apps import (
-    NoReverseMatch, apps_urlconf, reverse, reverse_any, reverse_fallback,
+    NoReverseMatch, reverse, reverse_any, reverse_fallback,
 )
 from feincms3_sites.middleware import apps_urlconf_for_site
 from feincms3_sites.models import Site
@@ -278,8 +278,32 @@ class AppsMiddlewareTest(TestCase):
         # The exact value of course does not matter, just the fact that the
         # value does not change all the time.
         self.assertEqual(
-            apps_urlconf(),
+            apps_urlconf_for_site(self.test_site),
             'urlconf_fe9552a8363ece1f7fcf4970bf575a47',
+        )
+
+        p = Page.objects.create(
+            title='new',
+            slug='new',
+            path='/bla/',
+            static_path=True,
+            language_code='en',
+            is_active=True,
+            application='blog',
+            site=Site.objects.create(host='testserver3'),
+        )
+
+        self.assertEqual(
+            apps_urlconf_for_site(self.test_site),
+            'urlconf_fe9552a8363ece1f7fcf4970bf575a47',
+        )
+
+        p.site = self.test_site
+        p.save()
+
+        self.assertEqual(
+            apps_urlconf_for_site(self.test_site),
+            'urlconf_0ca4c18b8aca69acfe121a9cbbdbd00e',
         )
 
     def test_snippet(self):

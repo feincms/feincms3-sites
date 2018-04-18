@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from feincms3.pages import AbstractPage as BasePage
+from feincms3 import pages
 
 
 class SiteQuerySet(models.QuerySet):
@@ -82,7 +82,12 @@ class SiteForeignKey(models.ForeignKey):
         return super().formfield(**kwargs)
 
 
-class AbstractPage(BasePage):
+class AbstractPageManager(pages.AbstractPageManager):
+    def active(self, site):
+        return self.filter(is_active=True, site=site)
+
+
+class AbstractPage(pages.AbstractPage):
     site = SiteForeignKey(
         Site,
         on_delete=models.CASCADE,
@@ -103,6 +108,8 @@ class AbstractPage(BasePage):
             ),
         ],
     )
+
+    objects = AbstractPageManager()
 
     class Meta:
         abstract = True
