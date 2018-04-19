@@ -148,6 +148,36 @@ class AppsMiddlewareTest(TestCase):
         # Site has been reset to parent's site
         self.assertEqual(subpage2.site, self.test_site)
 
+    def test_validation_with_sites(self):
+        other_site_page = Page.objects.create(
+            title='bla',
+            slug='bla',
+            path='/de/sub/',
+            static_path=True,
+            site=Site.objects.create(host='testserver3'),
+        )
+        root = Page.objects.create(
+            title='bla',
+            slug='bla',
+            path='/de/',
+            static_path=True,
+            site=self.test_site,
+        )
+        sub = Page.objects.create(
+            title='sub',
+            slug='sub',
+            parent=root,
+        )
+
+        # Reload pages to fetch CTE data
+        other_site_page, root, sub = list(Page.objects.order_by('id'))
+
+        other_site_page.full_clean()
+        sub.full_clean()
+        root.full_clean()
+
+        self.assertEqual(other_site_page.path, sub.path)
+
     def test_root_without_site(self):
         """Create a root page without selecting a site instance should show
         validation errors"""
