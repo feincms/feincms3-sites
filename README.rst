@@ -43,3 +43,6 @@ Installation and usage
   ``SecurityMiddleware``'s ``SECURE_SSL_REDIRECT = True`` to enforce
   SSL. In this case, insert ``redirect_to_site_middleware`` before the
   ``SecurityMiddleware``.
+- It is possible to define a default language per site. If this sounds
+  useful to you, replace ``django.middleware.locale.LocaleMiddleware``
+  with ``feincms3_sites.middleware.default_language_middleware``.

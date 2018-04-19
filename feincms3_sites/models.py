@@ -1,5 +1,6 @@
 import re
 
+from django.conf import global_settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -44,6 +45,17 @@ class Site(models.Model):
         _('host regular expression'),
         max_length=200,
         blank=True,
+    )
+    default_language = models.CharField(
+        _('default language'),
+        max_length=10,
+        blank=True,
+        # Not settings.LANGUAGES to avoid migrations for changing choices.
+        choices=global_settings.LANGUAGES,
+        help_text=_(
+            'The default language will be overridden by more specific settings'
+            ' such as the language of individual pages.'
+        ),
     )
 
     objects = SiteQuerySet.as_manager()

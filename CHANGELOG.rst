@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Raised test coverage to 100% again.
+- Added the possibility to define a default language per site.
+
 
 `0.4`_ (2018-04-18)
 ~~~~~~~~~~~~~~~~~~~

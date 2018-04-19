@@ -735,3 +735,96 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
         response = self.client.get('/', HTTP_HOST='example.org')
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response['Location'], 'https://example.org/')
+
+
+@override_settings(
+    MIDDLEWARE=[
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        # 'django.middleware.locale.LocaleMiddleware',
+        # 'feincms3_sites.middleware.site_middleware',
+        'feincms3_sites.middleware.default_language_middleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ],
+)
+class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
+    def test_request(self):
+        with six.assertRaisesRegex(
+                self,
+                ImproperlyConfigured,
+                'No "site" attribute on request.',
+        ):
+            self.client.get('/de/', HTTP_HOST='example.com')
+
+
+@override_settings(
+    MIDDLEWARE=[
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        # 'django.middleware.locale.LocaleMiddleware',
+        'feincms3_sites.middleware.site_middleware',
+        'feincms3_sites.middleware.default_language_middleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    ]
+)
+class DefaultLanguageTest(TestCase):
+    def test_language(self):
+        site = Site.objects.create(
+            host='example.com',
+            default_language='de',
+        )
+        self.assertRedirects(
+            self.client.get('/', HTTP_HOST=site.host),
+            '/de/',
+            fetch_redirect_response=False,
+        )
+
+        site.default_language = 'en'
+        site.save()
+
+        self.assertRedirects(
+            self.client.get('/', HTTP_HOST=site.host),
+            '/en/',
+            fetch_redirect_response=False,
+        )
+
+        site.default_language = ''
+        site.save()
+
+        self.assertRedirects(
+            self.client.get(
+                '/',
+                HTTP_HOST=site.host,
+                HTTP_ACCEPT_LANGUAGE='de',
+            ),
+            '/de/',
+            fetch_redirect_response=False,
+        )
+
+        self.assertRedirects(
+            self.client.get(
+                '/',
+                HTTP_HOST=site.host,
+                HTTP_ACCEPT_LANGUAGE='fr, en',
+            ),
+            '/en/',
+            fetch_redirect_response=False,
+        )
+
+        self.assertRedirects(
+            self.client.get(
+                '/',
+                HTTP_HOST=site.host,
+                HTTP_ACCEPT_LANGUAGE='fr',
+            ),
+            '/en/',
+            fetch_redirect_response=False,
+        )
