@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-12 11:47+0200\n"
+"POT-Creation-Date: 2018-04-19 09:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,58 +18,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:14
+#: admin.py:28
 msgid "advanced"
 msgstr "Fortgeschritten"
 
-#: apps.py:8 models.py:50 models.py:76
+#: apps.py:8 models.py:65
 msgid "sites"
 msgstr "Webseiten"
 
-#: models.py:28
+#: models.py:32
 msgid "is default"
 msgstr "ist standard"
 
-#: models.py:32
+#: models.py:36
 msgid "host"
 msgstr "Domainname"
 
-#: models.py:36
+#: models.py:40
 msgid "manage the host regex"
 msgstr "Domain-Regex verwalten"
 
-#: models.py:38
+#: models.py:42
 msgid "Deactivate this to specify the regex yourself."
 msgstr "Deaktivieren, um die Domain-Regex selbst zu setzen."
 
-#: models.py:41
+#: models.py:45
 msgid "host regular expression"
 msgstr "Domain-Regex"
 
-#: models.py:49
+#: models.py:50
+msgid "default language"
+msgstr "Standardsprache"
+
+#: models.py:56
+msgid ""
+"The default language will be overridden by more specific settings such as "
+"the language of individual pages."
+msgstr ""
+"Die Standardsprache wird von spezifischeren Einstellungen überschrieben wie "
+"beispielsweise der Sprache von einzelnen Seiten."
+
+#: models.py:64 models.py:106
 msgid "site"
 msgstr "Webseite"
 
-#: models.py:62
+#: models.py:77
 msgid "Only one site can be the default site."
 msgstr "Nur eine Webseite kann die Standard-Webseite sein."
 
-#: models.py:82
+#: models.py:112
 msgid "path"
 msgstr "Pfad"
 
-#: models.py:85
+#: models.py:115
 msgid "Generated automatically if 'static path' is unset."
 msgstr "Automatisch generiert falls 'statischer Pfad' nicht gesetzt ist."
 
-#: models.py:89
+#: models.py:119
 msgid "Path must start and end with a slash (/)."
 msgstr "Pfad muss mit einem Slash (/) starten und enden."
 
-#: models.py:97
+#: models.py:129
 msgid "page"
 msgstr "Seite"
 
-#: models.py:98
+#: models.py:130
 msgid "pages"
 msgstr "Seiten"
+
+#: models.py:153
+msgid "The site is required when creating root nodes."
+msgstr "Die Webseite wird zur Erstellung von Wurzelobjekten benötigt."
