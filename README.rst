@@ -67,12 +67,13 @@ here::
 
     @contextmanager
     def set_current_site(site):
-        outer = getattr(_local, 'site', None)
+        outer = current_site()
         _local.site = site
         yield
         _local.site = outer
 
     def current_site():
+        # Return the default site if _local.site is None?
         return getattr(_local, 'site', None)
 
     # Add this middleware after site_middleware or apps_middleware
