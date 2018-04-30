@@ -46,3 +46,38 @@ Installation and usage
 - It is possible to define a default language per site. If this sounds
   useful to you, replace ``django.middleware.locale.LocaleMiddleware``
   with ``feincms3_sites.middleware.default_language_middleware``.
+
+
+Accessing the site without a request
+====================================
+
+It might be useful under some circumstances to access a *current site*
+instance (whatever that may be) without passing the request everywhere,
+similar to ``django.utils.translation.get_language``. This can be easily
+achieved by writing your own middleware module. I do not want to
+encourage such usage (I find the explicitness of passing the request or
+the site desirable, even though it is sometimes annoying), but since
+there is no question thta it might be useful it still is documented
+here::
+
+    from contextlib import contextmanager
+    from threading import local
+
+    _local = local()
+
+    @contextmanager
+    def set_current_site(site):
+        outer = getattr(_local, 'site', None)
+        _local.site = site
+        yield
+        _local.site = outer
+
+    def current_site():
+        return getattr(_local, 'site', None)
+
+    # Add this middleware after site_middleware or apps_middleware
+    def current_site_middleware(get_response):
+        def middleware(request):
+            with set_current_site(request.site):
+                return get_response(request)
+        return middleware
