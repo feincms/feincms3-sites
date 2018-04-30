@@ -57,7 +57,7 @@ similar to ``django.utils.translation.get_language``. This can be easily
 achieved by writing your own middleware module. I do not want to
 encourage such usage (I find the explicitness of passing the request or
 the site desirable, even though it is sometimes annoying), but since
-there is no question thta it might be useful it still is documented
+there is no question that it might be useful it still is documented
 here::
 
     from contextlib import contextmanager
