@@ -16,5 +16,4 @@ tests/test.zip
 .coverage
 htmlcov
 venv
-.pytest_cache
 .tox
