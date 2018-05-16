@@ -4,5 +4,5 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class SitesAppConfig(AppConfig):
-    name = 'feincms3_sites'
-    verbose_name = capfirst(_('sites'))
+    name = "feincms3_sites"
+    verbose_name = capfirst(_("sites"))

@@ -13,11 +13,10 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def menus(context):
     menus = defaultdict(list)
-    pages = Page.objects.active(context['request'].site).filter(
-        Q(language_code=get_language()),
-        ~Q(menu=''),
+    pages = Page.objects.active(context["request"].site).filter(
+        Q(language_code=get_language()), ~Q(menu="")
     ).extra(
-        where=['depth BETWEEN 2 AND 3'],
+        where=["depth BETWEEN 2 AND 3"]
     )
     for page in pages:
         menus[page.menu].append(page)

@@ -1,4 +1,4 @@
 VERSION = (0, 4, 1)
-__version__ = '.'.join(map(str, VERSION))
+__version__ = ".".join(map(str, VERSION))
 
-default_app_config = 'feincms3_sites.apps.SitesAppConfig'
+default_app_config = "feincms3_sites.apps.SitesAppConfig"

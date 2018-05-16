@@ -12,53 +12,38 @@ from . import models
 @admin.register(models.Page)
 class PageAdmin(ContentEditor, TreeAdmin):
     list_display = [
-        'indented_title', 'move_column',
-        'is_active', 'menu',
-        'language_code',
-        'template_key',
-        'application',
+        "indented_title",
+        "move_column",
+        "is_active",
+        "menu",
+        "language_code",
+        "template_key",
+        "application",
     ]
-    list_filter = ['is_active', 'menu', AncestorFilter]
-    list_editable = ['is_active']
-    prepopulated_fields = {
-        'slug': ('title',),
-    }
+    list_filter = ["is_active", "menu", AncestorFilter]
+    list_editable = ["is_active"]
+    prepopulated_fields = {"slug": ("title",)}
     radio_fields = {
-        'menu': admin.HORIZONTAL,
-        'language_code': admin.HORIZONTAL,
-        'template_key': admin.HORIZONTAL,
-        'application': admin.HORIZONTAL,
+        "menu": admin.HORIZONTAL,
+        "language_code": admin.HORIZONTAL,
+        "template_key": admin.HORIZONTAL,
+        "application": admin.HORIZONTAL,
     }
-    raw_id_fields = ['parent']
+    raw_id_fields = ["parent"]
 
     fieldsets = [
-        (None, {
-            'fields': (
-                'is_active',
-                'title',
-                'parent',
-            )
-        }),
-        (capfirst(_('path')), {
-            'fields': (
-                'site',
-                'slug',
-                'static_path',
-                'path',
-            ),
-            'classes': ('tabbed',),
-        }),
-        (capfirst(_('settings')), {
-            'fields': (
-                'menu',
-                'language_code',
-                'template_key',
-                'application',
-            ),
-            'classes': ('tabbed',),
-        }),
+        (None, {"fields": ("is_active", "title", "parent")}),
+        (
+            capfirst(_("path")),
+            {"fields": ("site", "slug", "static_path", "path"), "classes": ("tabbed",)},
+        ),
+        (
+            capfirst(_("settings")),
+            {
+                "fields": ("menu", "language_code", "template_key", "application"),
+                "classes": ("tabbed",),
+            },
+        ),
     ]
 
-    inlines = [
-        plugins.SnippetInline.create(model=models.Snippet),
-    ]
+    inlines = [plugins.SnippetInline.create(model=models.Snippet)]

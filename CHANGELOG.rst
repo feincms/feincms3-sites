@@ -7,6 +7,9 @@ Change log
 
 - Raised test coverage to 100% again.
 - Added the possibility to define a default language per site.
+- Switched the preferred quote to ``"`` and started using `black
+  <https://pypi.org/project/black/>`_ to automatically format Python
+  code.
 
 
 `0.4`_ (2018-04-18)

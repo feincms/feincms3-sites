@@ -5,14 +5,16 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feincms3_sites', '0001_initial'),
-    ]
+    dependencies = [("feincms3_sites", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='site',
-            name='is_managed_re',
-            field=models.BooleanField(default=True, help_text='Deactivate this to specify the regex yourself.', verbose_name='manage the host regex'),
-        ),
+            model_name="site",
+            name="is_managed_re",
+            field=models.BooleanField(
+                default=True,
+                help_text="Deactivate this to specify the regex yourself.",
+                verbose_name="manage the host regex",
+            ),
+        )
     ]

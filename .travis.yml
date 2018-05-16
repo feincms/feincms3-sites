@@ -2,8 +2,8 @@ language: python
 cache: pip
 sudo: false
 python:
-- '3.6'
-- '3.5'
+- "3.6"
+- "3.5"
 addons:
   postgresql: "9.4"
 env:
@@ -15,6 +15,17 @@ matrix:
     - env: REQ="https://github.com/django/django/archive/master.zip#egg=Django"
 install:
 - pip install -U pip setuptools wheel
-- pip install $REQ feincms3 pytz psycopg2-binary
+- pip install $REQ feincms3 psycopg2-binary
 - python setup.py install
 script: cd tests && ./manage.py test testapp && cd ..
+
+jobs:
+  include:
+    - stage: style
+      env: REQ=none
+      install: skip
+      script:
+        - pip install flake8 isort unify
+        - flake8 .
+        - isort --check-only --recursive --diff feincms3_sites tests
+        - unify --check-only --recursive --quote '"' feincms3_sites tests
