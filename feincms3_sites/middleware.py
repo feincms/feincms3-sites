@@ -13,18 +13,16 @@ from .models import Site
 def apps_urlconf_for_site(site):
     page_model = concrete_model(AppsMixin)
     fields = ("path", "application", "app_instance_namespace", "language_code")
-    apps = page_model.objects.active(site).exclude(
-        app_instance_namespace=""
-    ).values_list(
-        *fields
-    ).order_by(
-        *fields
+    apps = (
+        page_model.objects.active(site)
+        .exclude(app_instance_namespace="")
+        .values_list(*fields)
+        .order_by(*fields)
     )
     return apps_urlconf(apps=apps)
 
 
 def site_middleware(get_response):
-
     def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
@@ -35,7 +33,6 @@ def site_middleware(get_response):
 
 
 def apps_middleware(get_response):
-
     def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
@@ -47,7 +44,6 @@ def apps_middleware(get_response):
 
 
 def redirect_to_site_middleware(get_response):
-
     def middleware(request):
         if not hasattr(request, "site"):
             raise ImproperlyConfigured(
@@ -56,9 +52,8 @@ def redirect_to_site_middleware(get_response):
             )
 
         # Host matches, and either no HTTPS enforcement or already HTTPS
-        if (
-            request.get_host() == request.site.host
-            and (not settings.SECURE_SSL_REDIRECT or request.is_secure())
+        if request.get_host() == request.site.host and (
+            not settings.SECURE_SSL_REDIRECT or request.is_secure()
         ):
             return get_response(request)
 
@@ -75,7 +70,6 @@ def redirect_to_site_middleware(get_response):
 
 
 def default_language_middleware(get_response):
-
     def middleware(request):
         if not hasattr(request, "site"):
             raise ImproperlyConfigured(

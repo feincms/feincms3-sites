@@ -81,7 +81,8 @@ class Migration(migrations.Migration):
                     "template_key",
                     models.CharField(
                         choices=[
-                            ("standard", "standard"), ("with-sidebar", "with sidebar")
+                            ("standard", "standard"),
+                            ("with-sidebar", "with sidebar"),
                         ],
                         default="standard",
                         max_length=100,

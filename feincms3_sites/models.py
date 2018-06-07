@@ -85,7 +85,6 @@ class SiteForeignKey(models.ForeignKey):
 
 
 class AbstractPageManager(pages.AbstractPageManager):
-
     def active(self, site):
         return self.filter(is_active=True, site=site)
 

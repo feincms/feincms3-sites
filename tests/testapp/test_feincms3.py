@@ -34,7 +34,6 @@ def merge_dicts(*dicts):
     MIDDLEWARE=settings.MIDDLEWARE + ["feincms3_sites.middleware.apps_middleware"]
 )
 class AppsMiddlewareTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
         deactivate_all()
@@ -477,7 +476,6 @@ class AppsMiddlewareTest(TestCase):
     MIDDLEWARE=settings.MIDDLEWARE + ["feincms3_sites.middleware.site_middleware"]
 )
 class SiteMiddlewareTest(TestCase):
-
     def test_404(self):
         test_site = Site.objects.create(host="testserver", is_default=True)
         Page.objects.create(
@@ -499,7 +497,6 @@ class SiteMiddlewareTest(TestCase):
 
 
 class CanonicalDomainMiddlewareTest(TestCase):
-
     def setUp(self):
         self.test_site = Site.objects.create(host="example.com", is_default=True)
         Page.objects.create(
@@ -521,7 +518,6 @@ class CanonicalDomainMiddlewareTest(TestCase):
     + settings.MIDDLEWARE
 )
 class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
-
     def test_request(self):
         self.assertContains(
             self.client.get("/de/", HTTP_HOST="example.com"), "home - testapp"
@@ -533,7 +529,6 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
     + settings.MIDDLEWARE
 )
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
-
     def test_request(self):
         with six.assertRaisesRegex(
             self, ImproperlyConfigured, 'No "site" attribute on request.'
@@ -549,7 +544,6 @@ class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     + settings.MIDDLEWARE
 )
 class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
-
     def test_http_requests(self):
         response = self.client.get("/", HTTP_HOST="example.org")
         self.assertEqual(response.status_code, 301)
@@ -579,7 +573,6 @@ class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
     SECURE_SSL_REDIRECT=True,
 )
 class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
-
     def test_http_redirects(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 301)
@@ -623,7 +616,6 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
     ]
 )
 class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
-
     def test_request(self):
         with six.assertRaisesRegex(
             self, ImproperlyConfigured, 'No "site" attribute on request.'
@@ -646,7 +638,6 @@ class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
     ]
 )
 class DefaultLanguageTest(TestCase):
-
     def test_language(self):
         site = Site.objects.create(host="example.com", default_language="de")
         self.assertRedirects(

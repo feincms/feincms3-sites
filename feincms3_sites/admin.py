@@ -33,6 +33,10 @@ class SiteAdmin(admin.ModelAdmin):
     ]
     form = SiteForm
     list_display = (
-        "host", "is_default", "is_managed_re", "host_re", "default_language"
+        "host",
+        "is_default",
+        "is_managed_re",
+        "host_re",
+        "default_language",
     )
     ordering = ("-is_default",)
