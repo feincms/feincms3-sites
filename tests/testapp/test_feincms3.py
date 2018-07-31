@@ -98,8 +98,7 @@ class AppsMiddlewareTest(TestCase):
 
         self.assertRedirects(response, "/admin/testapp/page/")
 
-        subpage1 = Page.objects.latest("id")
-        self.assertEqual(subpage1.slug, "subpage1-1")
+        subpage1 = Page.objects.get(slug="subpage-1")
         self.assertEqual(subpage1.path, "/en/subpage-1/")
         # Site has been set to parent's site
         self.assertEqual(subpage1.site, self.test_site)
@@ -125,7 +124,7 @@ class AppsMiddlewareTest(TestCase):
 
         self.assertRedirects(response, "/admin/testapp/page/")
 
-        subpage2 = Page.objects.latest("id")
+        subpage2 = Page.objects.get(slug="subpage-2")
         self.assertEqual(subpage2.path, "/en/subpage-2/")
         # Site has been reset to parent's site
         self.assertEqual(subpage2.site, self.test_site)
