@@ -99,6 +99,7 @@ class AppsMiddlewareTest(TestCase):
         self.assertRedirects(response, "/admin/testapp/page/")
 
         subpage1 = Page.objects.latest("id")
+        self.assertEqual(subpage1.slug, "subpage1-1")
         self.assertEqual(subpage1.path, "/en/subpage-1/")
         # Site has been set to parent's site
         self.assertEqual(subpage1.site, self.test_site)
