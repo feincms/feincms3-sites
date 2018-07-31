@@ -278,7 +278,7 @@ class AppsMiddlewareTest(TestCase):
 
         self.assertEqual(
             apps_urlconf_for_site(self.test_site),
-            "urlconf_0ca4c18b8aca69acfe121a9cbbdbd00e",
+            "urlconf_da1f83777fa670f709393652c6a2b8ed",
         )
 
     def test_snippet(self):
