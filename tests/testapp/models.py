@@ -58,7 +58,7 @@ class Page(
 PagePlugin = create_plugin_base(Page)
 
 
-class Snippet(plugins.Snippet, PagePlugin):
+class Snippet(plugins.snippet.Snippet, PagePlugin):
     TEMPLATES = [("snippet.html", _("snippet"))]
 
 

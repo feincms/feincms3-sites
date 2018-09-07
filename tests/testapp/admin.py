@@ -46,4 +46,4 @@ class PageAdmin(ContentEditor, TreeAdmin):
         ),
     ]
 
-    inlines = [plugins.SnippetInline.create(model=models.Snippet)]
+    inlines = [plugins.snippet.SnippetInline.create(model=models.Snippet)]
