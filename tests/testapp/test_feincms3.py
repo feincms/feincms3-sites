@@ -453,6 +453,22 @@ class AppsMiddlewareTest(TestCase):
         self.test_site.delete()
         self.assertEqual(Site.objects.for_host("anything"), None)
 
+    def test_host_re_mismatch(self):
+        self.test_site.is_managed_re = False
+        self.test_site.host = "testserver2"
+        with six.assertRaisesRegex(
+            self, ValidationError, r"The regular expression does not match the host."
+        ):
+            self.test_site.full_clean()
+
+    def test_invalid_host_re(self):
+        self.test_site.is_managed_re = False
+        self.test_site.host_re = r"^(asdf"  # broken on purpose
+        with six.assertRaisesRegex(
+            self, ValidationError, "Error while validating the regular expression: "
+        ):
+            self.test_site.full_clean()
+
     def test_404(self):
         Page.objects.create(
             title="home",

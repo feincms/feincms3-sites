@@ -65,9 +65,23 @@ class Site(models.Model):
             ).exists():
                 raise ValidationError(_("Only one site can be the default site."))
 
-    def save(self, *args, **kwargs):
         if self.is_managed_re:
             self.host_re = r"^%s$" % re.escape(self.host)
+
+        try:
+            match = re.match(self.host_re, self.host)
+        except Exception as exc:
+            raise ValidationError(
+                _("Error while validating the regular expression: %s") % exc
+            )
+        else:
+            if not match:
+                raise ValidationError(
+                    _("The regular expression does not match the host.")
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
 
     save.alters_data = True

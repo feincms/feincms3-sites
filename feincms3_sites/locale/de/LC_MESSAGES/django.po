@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-19 09:43+0200\n"
+"POT-Creation-Date: 2018-10-02 13:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:28
+#: admin.py:27
 msgid "advanced"
 msgstr "Fortgeschritten"
 
-#: apps.py:8 models.py:65
+#: apps.py:8 models.py:56
 msgid "sites"
 msgstr "Webseiten"
 
@@ -30,27 +30,27 @@ msgstr "Webseiten"
 msgid "is default"
 msgstr "ist standard"
 
-#: models.py:36
+#: models.py:33
 msgid "host"
 msgstr "Domainname"
 
-#: models.py:40
+#: models.py:35
 msgid "manage the host regex"
 msgstr "Domain-Regex verwalten"
 
-#: models.py:42
+#: models.py:37
 msgid "Deactivate this to specify the regex yourself."
 msgstr "Deaktivieren, um die Domain-Regex selbst zu setzen."
 
-#: models.py:45
+#: models.py:39
 msgid "host regular expression"
 msgstr "Domain-Regex"
 
-#: models.py:50
+#: models.py:41
 msgid "default language"
 msgstr "Standardsprache"
 
-#: models.py:56
+#: models.py:47
 msgid ""
 "The default language will be overridden by more specific settings such as "
 "the language of individual pages."
@@ -58,34 +58,43 @@ msgstr ""
 "Die Standardsprache wird von spezifischeren Einstellungen überschrieben wie "
 "beispielsweise der Sprache von einzelnen Seiten."
 
-#: models.py:64 models.py:106
+#: models.py:55 models.py:106
 msgid "site"
 msgstr "Webseite"
 
-#: models.py:77
+#: models.py:66
 msgid "Only one site can be the default site."
 msgstr "Nur eine Webseite kann die Standard-Webseite sein."
 
-#: models.py:112
+#: models.py:74
+msgid "The regular expression does not match the host."
+msgstr "Der Domainname passt nicht zur Domain-Regex."
+
+#: models.py:78
+#, python-format
+msgid "Error while validating the regular expression: %s"
+msgstr "Fehler während Validierung des Domain-Regex: %s"
+
+#: models.py:111
 msgid "path"
 msgstr "Pfad"
 
-#: models.py:115
+#: models.py:114
 msgid "Generated automatically if 'static path' is unset."
 msgstr "Automatisch generiert falls 'statischer Pfad' nicht gesetzt ist."
 
-#: models.py:119
+#: models.py:118
 msgid "Path must start and end with a slash (/)."
 msgstr "Pfad muss mit einem Slash (/) starten und enden."
 
-#: models.py:129
+#: models.py:128
 msgid "page"
 msgstr "Seite"
 
-#: models.py:130
+#: models.py:129
 msgid "pages"
 msgstr "Seiten"
 
-#: models.py:153
+#: models.py:149
 msgid "The site is required when creating root nodes."
 msgstr "Die Webseite wird zur Erstellung von Wurzelobjekten benötigt."

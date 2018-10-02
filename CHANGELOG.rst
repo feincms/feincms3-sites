@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Added validation of the ``host_re`` so that invalid input is catched
+  early.
+
+
 `0.5`_ (2018-10-02)
 ~~~~~~~~~~~~~~~~~~~
 
