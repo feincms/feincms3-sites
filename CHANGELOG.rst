@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`0.5`_ (2018-10-02)
+~~~~~~~~~~~~~~~~~~~
+
 - Raised test coverage to 100% again.
 - Added the possibility to define a default language per site.
 - Switched the preferred quote to ``"`` and started using `black
@@ -62,4 +65,5 @@ Change log
 .. _0.2: https://github.com/matthiask/feincms3-sites/compare/0.1...0.2
 .. _0.3: https://github.com/matthiask/feincms3-sites/compare/0.2...0.3
 .. _0.4: https://github.com/matthiask/feincms3-sites/compare/0.3...0.4
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.4...master
+.. _0.5: https://github.com/matthiask/feincms3-sites/compare/0.4...0.5
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.5...master
