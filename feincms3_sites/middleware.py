@@ -7,8 +7,6 @@ from django.utils.cache import patch_vary_headers
 from feincms3.apps import AppsMixin, apps_urlconf
 from feincms3.utils import concrete_model
 
-from .models import Site
-
 
 def apps_urlconf_for_site(site):
     page_model = concrete_model(AppsMixin)
@@ -23,6 +21,8 @@ def apps_urlconf_for_site(site):
 
 
 def site_middleware(get_response):
+    from .models import Site
+
     def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
@@ -33,6 +33,8 @@ def site_middleware(get_response):
 
 
 def apps_middleware(get_response):
+    from .models import Site
+
     def middleware(request):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
