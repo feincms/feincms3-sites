@@ -126,6 +126,7 @@ class AbstractPage(pages.AbstractPage):
 
     class Meta:
         abstract = True
+        ordering = ["position"]
         unique_together = (("site", "path"),)
         verbose_name = _("page")
         verbose_name_plural = _("pages")

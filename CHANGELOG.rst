@@ -8,6 +8,8 @@ Change log
 - Added validation of the ``host_re`` so that invalid input is catched
   early.
 - Sort non-default sites by host in the administration interface.
+- Added ordering by ``position`` to the abstract page (necessary for
+  newer versions of django-tree-queries).
 
 
 `0.5`_ (2018-10-02)
