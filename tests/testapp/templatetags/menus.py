@@ -10,11 +10,11 @@ from testapp.models import Page
 register = template.Library()
 
 
-@register.simple_tag(takes_context=True)
-def menus(context):
+@register.simple_tag
+def menus():
     menus = defaultdict(list)
     pages = (
-        Page.objects.active(context["request"].site)
+        Page.objects.active()
         .filter(Q(language_code=get_language()), ~Q(menu=""))
         .extra(where=["tree_depth BETWEEN 1 AND 2"])
     )

@@ -10,6 +10,10 @@ Change log
 - Sort non-default sites by host in the administration interface.
 - Added ordering by ``position`` to the abstract page (necessary for
   newer versions of django-tree-queries).
+- Added support for using feincms3-sites without explicitly specifying
+  the site everywhere by taking advantage of the upcoming `contextvars
+  <https://docs.python.org/3/library/contextvars.html>`__ module and its
+  backports.
 
 
 `0.5`_ (2018-10-02)

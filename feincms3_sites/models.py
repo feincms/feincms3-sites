@@ -99,7 +99,11 @@ class SiteForeignKey(models.ForeignKey):
 
 
 class AbstractPageManager(pages.AbstractPageManager):
-    def active(self, site):
+    def active(self, site=None):
+        if site is None:
+            from .middleware import current_site
+
+            site = current_site()
         return self.filter(is_active=True, site=site)
 
 

@@ -1,3 +1,6 @@
+import contextvars
+from contextlib import contextmanager
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponsePermanentRedirect
@@ -8,7 +11,21 @@ from feincms3.apps import AppsMixin, apps_urlconf
 from feincms3.utils import concrete_model
 
 
-def apps_urlconf_for_site(site):
+_current_site = contextvars.ContextVar("current_site")
+
+
+@contextmanager
+def set_current_site(site):
+    token = _current_site.set(site)
+    yield
+    _current_site.reset(token)
+
+
+def current_site():
+    return _current_site.get(None)
+
+
+def apps_urlconf_for_site(site=None):
     page_model = concrete_model(AppsMixin)
     fields = ("path", "application", "app_instance_namespace", "language_code")
     apps = (
@@ -27,7 +44,8 @@ def site_middleware(get_response):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
             raise Http404("No configuration found for %r" % request.get_host())
-        return get_response(request)
+        with set_current_site(request.site):
+            return get_response(request)
 
     return middleware
 
@@ -40,7 +58,8 @@ def apps_middleware(get_response):
         if request.site is None:
             raise Http404("No configuration found for %r" % request.get_host())
         request.urlconf = apps_urlconf_for_site(request.site)
-        return get_response(request)
+        with set_current_site(request.site):
+            return get_response(request)
 
     return middleware
 
