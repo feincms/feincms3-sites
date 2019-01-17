@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`0.6`_ (2019-01-17)
+~~~~~~~~~~~~~~~~~~~
+
 - Added validation of the ``host_re`` so that invalid input is catched
   early.
 - Sort non-default sites by host in the administration interface.
@@ -77,4 +80,5 @@ Change log
 .. _0.3: https://github.com/matthiask/feincms3-sites/compare/0.2...0.3
 .. _0.4: https://github.com/matthiask/feincms3-sites/compare/0.3...0.4
 .. _0.5: https://github.com/matthiask/feincms3-sites/compare/0.4...0.5
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.5...master
+.. _0.6: https://github.com/matthiask/feincms3-sites/compare/0.5...0.6
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.6...master
