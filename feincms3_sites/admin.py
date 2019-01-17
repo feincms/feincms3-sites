@@ -39,4 +39,4 @@ class SiteAdmin(admin.ModelAdmin):
         "host_re",
         "default_language",
     )
-    ordering = ("-is_default",)
+    ordering = ["-is_default", "host"]
