@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Added an ``is_active`` flag to sites.
+
+
 `0.6`_ (2019-01-17)
 ~~~~~~~~~~~~~~~~~~~
 

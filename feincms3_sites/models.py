@@ -20,7 +20,7 @@ class SiteQuerySet(models.QuerySet):
 
     def for_host(self, host):
         default = None
-        for site in self.order_by("-is_default"):
+        for site in self.filter(is_active=True).order_by("-is_default", "pk"):
             if re.match(site.host_re, host):
                 return site
             elif site.is_default:
@@ -29,6 +29,7 @@ class SiteQuerySet(models.QuerySet):
 
 
 class Site(models.Model):
+    is_active = models.BooleanField(_("is active"), default=True)
     is_default = models.BooleanField(_("is default"), default=False)
     host = models.CharField(_("host"), max_length=200)
     is_managed_re = models.BooleanField(
