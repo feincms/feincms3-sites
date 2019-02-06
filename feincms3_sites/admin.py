@@ -32,12 +32,13 @@ class SiteAdmin(admin.ModelAdmin):
         ),
     ]
     form = SiteForm
-    list_display = (
+    list_display = [
         "host",
         "is_active",
         "is_default",
         "is_managed_re",
         "host_re",
         "default_language",
-    )
+    ]
+    list_editable = ["is_active", "is_default"]
     ordering = ["-is_default", "host"]
