@@ -5,9 +5,16 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`0.7`_ (2019-02-06)
+~~~~~~~~~~~~~~~~~~~
+
 - Added an ``is_active`` flag to sites.
 - Removed the check that only one site is the default, making it
   possible to change the default through the admin interface.
+- Made it possible to edit ``is_active`` and ``is_default`` through the
+  changelist.
+- Updated the Travis CI configuration to cover a greater range of
+  Python and Django version combinations.
 
 
 `0.6`_ (2019-01-17)
@@ -86,4 +93,5 @@ Change log
 .. _0.4: https://github.com/matthiask/feincms3-sites/compare/0.3...0.4
 .. _0.5: https://github.com/matthiask/feincms3-sites/compare/0.4...0.5
 .. _0.6: https://github.com/matthiask/feincms3-sites/compare/0.5...0.6
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.6...master
+.. _0.7: https://github.com/matthiask/feincms3-sites/compare/0.6...0.7
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.7...master
