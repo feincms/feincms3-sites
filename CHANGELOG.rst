@@ -6,6 +6,8 @@ Change log
 ~~~~~~~~~~~~~~~
 
 - Added an ``is_active`` flag to sites.
+- Removed the check that only one site is the default, making it
+  possible to change the default through the admin interface.
 
 
 `0.6`_ (2019-01-17)

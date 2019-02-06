@@ -60,12 +60,6 @@ class Site(models.Model):
         return self.host
 
     def clean(self):
-        if self.is_default:
-            if self.__class__._base_manager.filter(
-                Q(is_default=True), ~Q(pk=self.pk)
-            ).exists():
-                raise ValidationError(_("Only one site can be the default site."))
-
         if self.is_managed_re:
             self.host_re = r"^%s$" % re.escape(self.host)
 
