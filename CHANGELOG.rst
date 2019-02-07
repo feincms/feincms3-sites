@@ -8,6 +8,8 @@ Change log
 - Removed ``apps_urlconf_for_site`` and ``apps_middleware`` since
   feincms3's ``apps_middleware`` now automatically does the right thing
   when used after ``site_middleware``.
+- Made the ``site`` argument to ``AbstractPage.objects.active()``
+  keyword-only.
 
 
 `0.7`_ (2019-02-06)
