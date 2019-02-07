@@ -244,16 +244,20 @@ class AppsMiddlewareTest(TestCase):
         self.assertContains(response, 'class="article"', 5)
 
         with set_current_site(self.test_site):
-            article = Article.objects.order_by("pk").first()
-            with override("de"):
-                self.assertEqual(
-                    article.get_absolute_url(), "/de/publications/%s/" % article.pk
-                )
+            set_urlconf(apps_urlconf())
+            try:
+                article = Article.objects.order_by("pk").first()
+                with override("de"):
+                    self.assertEqual(
+                        article.get_absolute_url(), "/de/publications/%s/" % article.pk
+                    )
 
-            with override("en"):
-                self.assertEqual(
-                    article.get_absolute_url(), "/en/publications/%s/" % article.pk
-                )
+                with override("en"):
+                    self.assertEqual(
+                        article.get_absolute_url(), "/en/publications/%s/" % article.pk
+                    )
+            finally:
+                set_urlconf(None)
 
         response = self.client.get("/de/publications/%s/" % article.pk)
         self.assertContains(response, "<h1>publications 0</h1>", 1)
