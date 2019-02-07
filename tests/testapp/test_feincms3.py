@@ -7,8 +7,14 @@ from django.urls import set_urlconf
 from django.utils import six
 from django.utils.translation import deactivate_all, override
 
-from feincms3.apps import NoReverseMatch, reverse, reverse_any, reverse_fallback
-from feincms3_sites.middleware import apps_urlconf_for_site
+from feincms3.apps import (
+    NoReverseMatch,
+    apps_urlconf,
+    reverse,
+    reverse_any,
+    reverse_fallback,
+)
+from feincms3_sites.middleware import set_current_site
 from feincms3_sites.models import Site
 
 from .models import Article, Page
@@ -31,7 +37,8 @@ def merge_dicts(*dicts):
 
 
 @override_settings(
-    MIDDLEWARE=settings.MIDDLEWARE + ["feincms3_sites.middleware.apps_middleware"]
+    MIDDLEWARE=settings.MIDDLEWARE
+    + ["feincms3_sites.middleware.site_middleware", "feincms3.apps.apps_middleware"]
 )
 class AppsMiddlewareTest(TestCase):
     def setUp(self):
@@ -236,8 +243,7 @@ class AppsMiddlewareTest(TestCase):
         response = self.client.get("/en/publications/")
         self.assertContains(response, 'class="article"', 5)
 
-        set_urlconf(apps_urlconf_for_site(self.test_site))
-        try:
+        with set_current_site(self.test_site):
             article = Article.objects.order_by("pk").first()
             with override("de"):
                 self.assertEqual(
@@ -248,18 +254,14 @@ class AppsMiddlewareTest(TestCase):
                 self.assertEqual(
                     article.get_absolute_url(), "/en/publications/%s/" % article.pk
                 )
-        finally:
-            set_urlconf(None)
 
         response = self.client.get("/de/publications/%s/" % article.pk)
         self.assertContains(response, "<h1>publications 0</h1>", 1)
 
         # The exact value of course does not matter, just the fact that the
         # value does not change all the time.
-        self.assertEqual(
-            apps_urlconf_for_site(self.test_site),
-            "urlconf_fe9552a8363ece1f7fcf4970bf575a47",
-        )
+        with set_current_site(self.test_site):
+            self.assertEqual(apps_urlconf(), "urlconf_fe9552a8363ece1f7fcf4970bf575a47")
 
         p = Page.objects.create(
             title="new",
@@ -272,18 +274,14 @@ class AppsMiddlewareTest(TestCase):
             site=Site.objects.create(host="testserver3"),
         )
 
-        self.assertEqual(
-            apps_urlconf_for_site(self.test_site),
-            "urlconf_fe9552a8363ece1f7fcf4970bf575a47",
-        )
+        with set_current_site(self.test_site):
+            self.assertEqual(apps_urlconf(), "urlconf_fe9552a8363ece1f7fcf4970bf575a47")
 
         p.site = self.test_site
         p.save()
 
-        self.assertEqual(
-            apps_urlconf_for_site(self.test_site),
-            "urlconf_da1f83777fa670f709393652c6a2b8ed",
-        )
+        with set_current_site(self.test_site):
+            self.assertEqual(apps_urlconf(), "urlconf_0ca4c18b8aca69acfe121a9cbbdbd00e")
 
     def test_snippet(self):
         """Check that snippets have access to the main rendering context
@@ -413,11 +411,11 @@ class AppsMiddlewareTest(TestCase):
         self.assertRaises(NoReverseMatch, a.get_absolute_url)
 
         # No apps on this site
-        self.assertEqual(apps_urlconf_for_site(self.test_site), "testapp.urls")
+        with set_current_site(self.test_site):
+            self.assertEqual(apps_urlconf(), "testapp.urls")
         # Apps on this site
-        self.assertEqual(
-            apps_urlconf_for_site(page.site), "urlconf_01c07a48384868b2300536767c9879e2"
-        )
+        with set_current_site(page.site):
+            self.assertEqual(apps_urlconf(), "urlconf_01c07a48384868b2300536767c9879e2")
 
         try:
             set_urlconf("urlconf_01c07a48384868b2300536767c9879e2")

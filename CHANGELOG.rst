@@ -5,7 +5,7 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- Deprecated ``apps_urlconf_for_site`` and ``apps_middleware`` since
+- Removed ``apps_urlconf_for_site`` and ``apps_middleware`` since
   feincms3's ``apps_middleware`` now automatically does the right thing
   when used after ``site_middleware``.
 

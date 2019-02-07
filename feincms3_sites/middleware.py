@@ -1,5 +1,4 @@
 import contextvars
-import warnings
 from contextlib import contextmanager
 
 from django.conf import settings
@@ -7,8 +6,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponsePermanentRedirect
 from django.utils import translation
 from django.utils.cache import patch_vary_headers
-
-from feincms3.apps import AppsMixin, apps_urlconf
 
 
 _current_site = contextvars.ContextVar("current_site")
@@ -25,26 +22,6 @@ def current_site():
     return _current_site.get(None)
 
 
-def apps_urlconf_for_site(site=None):
-    warnings.warn(
-        "apps_urlconf_for_site is deprecated since feincms3.apps.apps_urlconf"
-        " now automatically filters by site.",
-        Warning,
-        stacklevel=2,
-    )
-    from feincms3.utils import concrete_model
-
-    page_model = concrete_model(AppsMixin)
-    fields = ("path", "application", "app_instance_namespace", "language_code")
-    apps = (
-        page_model.objects.active(site)
-        .exclude(app_instance_namespace="")
-        .values_list(*fields)
-        .order_by(*fields)
-    )
-    return apps_urlconf(apps=apps)
-
-
 def site_middleware(get_response):
     from .models import Site
 
@@ -52,28 +29,6 @@ def site_middleware(get_response):
         request.site = Site.objects.for_host(request.get_host())
         if request.site is None:
             raise Http404("No configuration found for %r" % request.get_host())
-        with set_current_site(request.site):
-            return get_response(request)
-
-    return middleware
-
-
-def apps_middleware(get_response):
-    from .models import Site
-
-    warnings.warn(
-        "feincms3_sites.middleware.apps_middleware is deprecated."
-        " Simply use feincms3_sites.middleware.site_middleware and"
-        " feincms3.apps.apps_middleware directly after each other.",
-        Warning,
-        stacklevel=2,
-    )
-
-    def middleware(request):
-        request.site = Site.objects.for_host(request.get_host())
-        if request.site is None:
-            raise Http404("No configuration found for %r" % request.get_host())
-        request.urlconf = apps_urlconf_for_site(request.site)
         with set_current_site(request.site):
             return get_response(request)
 
