@@ -4,7 +4,6 @@ from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import set_urlconf
-from django.utils import six
 from django.utils.translation import deactivate_all, override
 
 from feincms3.apps import (
@@ -316,8 +315,7 @@ class AppsMiddlewareTest(TestCase):
         self.assertEqual(reverse_fallback("test", reverse, "not-exists"), "test")
         self.assertEqual(reverse_fallback("test", reverse, "admin:index"), "/admin/")
         self.assertEqual(reverse_any(("not-exists", "admin:index")), "/admin/")
-        with six.assertRaisesRegex(
-            self,
+        with self.assertRaisesRegex(
             NoReverseMatch,
             r"Reverse for any of 'not-exists-1', 'not-exists-2' with"
             r" arguments '\[\]' and keyword arguments '{}' not found.",
@@ -462,16 +460,16 @@ class AppsMiddlewareTest(TestCase):
     def test_host_re_mismatch(self):
         self.test_site.is_managed_re = False
         self.test_site.host = "testserver2"
-        with six.assertRaisesRegex(
-            self, ValidationError, r"The regular expression does not match the host."
+        with self.assertRaisesRegex(
+            ValidationError, r"The regular expression does not match the host."
         ):
             self.test_site.full_clean()
 
     def test_invalid_host_re(self):
         self.test_site.is_managed_re = False
         self.test_site.host_re = r"^(asdf"  # broken on purpose
-        with six.assertRaisesRegex(
-            self, ValidationError, "Error while validating the regular expression: "
+        with self.assertRaisesRegex(
+            ValidationError, "Error while validating the regular expression: "
         ):
             self.test_site.full_clean()
 
@@ -552,8 +550,8 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
 )
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
-        with six.assertRaisesRegex(
-            self, ImproperlyConfigured, 'No "site" attribute on request.'
+        with self.assertRaisesRegex(
+            ImproperlyConfigured, 'No "site" attribute on request.'
         ):
             self.client.get("/de/", HTTP_HOST="example.com")
 
@@ -639,8 +637,8 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
 )
 class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
-        with six.assertRaisesRegex(
-            self, ImproperlyConfigured, 'No "site" attribute on request.'
+        with self.assertRaisesRegex(
+            ImproperlyConfigured, 'No "site" attribute on request.'
         ):
             self.client.get("/de/", HTTP_HOST="example.com")
 
