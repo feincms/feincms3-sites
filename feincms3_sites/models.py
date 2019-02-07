@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms3 import pages
 
+from feincms3_sites.middleware import current_site
+
 
 class SiteQuerySet(models.QuerySet):
     """
@@ -95,11 +97,7 @@ class SiteForeignKey(models.ForeignKey):
 
 class AbstractPageManager(pages.AbstractPageManager):
     def active(self, *, site=None):
-        if site is None:
-            from .middleware import current_site
-
-            site = current_site()
-        return self.filter(is_active=True, site=site)
+        return self.filter(is_active=True, site=site or current_site())
 
 
 class AbstractPage(pages.AbstractPage):
