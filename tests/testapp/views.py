@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
+from feincms3.regions import Regions
 from feincms3.renderer import TemplatePluginRenderer
 
 from .models import Page, Snippet
@@ -26,6 +27,8 @@ def page_detail(request, path=None):
         page.template.template_name,
         {
             "page": page,
-            "regions": renderer.regions(page, inherit_from=page.ancestors().reverse()),
+            "regions": Regions.from_item(
+                page, renderer=renderer, inherit_from=page.ancestors().reverse()
+            ),
         },
     )
