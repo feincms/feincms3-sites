@@ -254,6 +254,12 @@ class AppsMiddlewareTest(TestCase):
         self.assertEqual(Site.objects.for_host("testserver-anything"), s3)
         self.assertEqual(Site.objects.for_host("anything"), self.test_site)
 
+        s4 = Site.objects.create(
+            host="example.com", host_re=r"example\.com$", is_managed_re=False
+        )
+        self.assertEqual(Site.objects.for_host("example.com"), s4)
+        self.assertEqual(Site.objects.for_host("www.example.com"), s4)
+
         # No default site:
         self.test_site.delete()
         self.assertEqual(Site.objects.for_host("anything"), None)

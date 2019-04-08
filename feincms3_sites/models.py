@@ -23,7 +23,7 @@ class SiteQuerySet(models.QuerySet):
     def for_host(self, host):
         default = None
         for site in self.filter(is_active=True).order_by("-is_default", "pk"):
-            if re.match(site.host_re, host):
+            if re.search(site.host_re, host):
                 return site
             elif site.is_default:
                 default = site
@@ -66,7 +66,7 @@ class Site(models.Model):
             self.host_re = r"^%s$" % re.escape(self.host)
 
         try:
-            match = re.match(self.host_re, self.host)
+            match = re.search(self.host_re, self.host)
         except Exception as exc:
             raise ValidationError(
                 _("Error while validating the regular expression: %s") % exc

@@ -5,6 +5,11 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Removed the requirement to anchor site regular expressions at the
+  beginning (meaning that e.g. ``example\.com$`` now works as it
+  should).
+
+
 `0.8`_ (2019-02-07)
 ~~~~~~~~~~~~~~~~~~~
 
