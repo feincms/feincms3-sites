@@ -130,7 +130,9 @@ class AbstractPage(pages.AbstractPage):
 
     def _path_clash_candidates(self):
         return self.__class__._default_manager.exclude(
-            ~Q(site=self.site_id) | Q(pk__in=self.descendants()) | Q(pk=self.pk)
+            ~Q(site=self.site_id)
+            | Q(pk__in=self.descendants(), static_path=False)
+            | Q(pk=self.pk)
         )
 
     def clean_fields(self, exclude=None):
