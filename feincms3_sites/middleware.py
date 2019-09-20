@@ -40,7 +40,7 @@ def redirect_to_site_middleware(get_response):
         if not hasattr(request, "site"):
             raise ImproperlyConfigured(
                 'No "site" attribute on request. Insert site_middleware'
-                " or apps_middleware before redirect_to_site_middleware."
+                " before redirect_to_site_middleware."
             )
 
         # Host matches, and either no HTTPS enforcement or already HTTPS
@@ -66,7 +66,7 @@ def default_language_middleware(get_response):
         if not hasattr(request, "site"):
             raise ImproperlyConfigured(
                 'No "site" attribute on request. Insert site_middleware'
-                " or apps_middleware before default_language_middleware."
+                " before default_language_middleware."
             )
 
         # No i18n_patterns handling for now.
