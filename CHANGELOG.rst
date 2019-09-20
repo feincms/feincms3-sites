@@ -8,6 +8,8 @@ Change log
 - Removed the requirement to anchor site regular expressions at the
   beginning (meaning that e.g. ``example\.com$`` now works as it
   should).
+- Fixed a possible path uniqueness problem with descendants with static
+  paths.
 
 
 `0.8`_ (2019-02-07)
