@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`0.9`_ (2019-09-20)
+~~~~~~~~~~~~~~~~~~~
+
 - Removed the requirement to anchor site regular expressions at the
   beginning (meaning that e.g. ``example\.com$`` now works as it
   should).
@@ -112,4 +115,5 @@ Change log
 .. _0.6: https://github.com/matthiask/feincms3-sites/compare/0.5...0.6
 .. _0.7: https://github.com/matthiask/feincms3-sites/compare/0.6...0.7
 .. _0.8: https://github.com/matthiask/feincms3-sites/compare/0.7...0.8
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.8...master
+.. _0.9: https://github.com/matthiask/feincms3-sites/compare/0.8...0.9
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.9...master
