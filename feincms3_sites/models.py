@@ -4,7 +4,6 @@ from django.conf import global_settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from feincms3 import pages
@@ -129,11 +128,7 @@ class AbstractPage(pages.AbstractPage):
         verbose_name_plural = _("pages")
 
     def _path_clash_candidates(self):
-        return self.__class__._default_manager.exclude(
-            ~Q(site=self.site_id)
-            | Q(pk__in=self.descendants(), static_path=False)
-            | Q(pk=self.pk)
-        )
+        return super()._path_clash_candidates().filter(site=self.site_id)
 
     def clean_fields(self, exclude=None):
         """
