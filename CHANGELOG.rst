@@ -5,6 +5,14 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.10`_ (2020-01-09)
+~~~~~~~~~~~~~~~~~~~~
+
+- Verified compatibility with Django 3.0.
+- Replaced ``ugettext*`` with ``gettext*``.
+
+
 `0.9`_ (2019-09-20)
 ~~~~~~~~~~~~~~~~~~~
 
@@ -116,4 +124,5 @@ Change log
 .. _0.7: https://github.com/matthiask/feincms3-sites/compare/0.6...0.7
 .. _0.8: https://github.com/matthiask/feincms3-sites/compare/0.7...0.8
 .. _0.9: https://github.com/matthiask/feincms3-sites/compare/0.8...0.9
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.9...master
+.. _0.10: https://github.com/matthiask/feincms3-sites/compare/0.9...0.10
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.10...master
