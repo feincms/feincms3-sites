@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 from django.urls import set_urlconf
 from django.utils.translation import deactivate_all, override
 
-from feincms3.apps import NoReverseMatch, apps_urlconf
+from feincms3.applications import NoReverseMatch, apps_urlconf
 from feincms3_sites.middleware import set_current_site
 from feincms3_sites.models import Site
 
@@ -31,7 +31,10 @@ def merge_dicts(*dicts):
 
 @override_settings(
     MIDDLEWARE=settings.MIDDLEWARE
-    + ["feincms3_sites.middleware.site_middleware", "feincms3.apps.apps_middleware"]
+    + [
+        "feincms3_sites.middleware.site_middleware",
+        "feincms3.applications.apps_middleware",
+    ]
 )
 class AppsMiddlewareTest(TestCase):
     def setUp(self):
