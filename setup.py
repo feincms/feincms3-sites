@@ -42,7 +42,7 @@ setup(
     zip_safe=False,
     install_requires=[
         "Django>=2.2",
-        "feincms3>=0.21.3",
+        "feincms3>=0.38.1",
         'contextvars;python_version<"3.7"',
     ],
 )

@@ -94,7 +94,7 @@ class SiteForeignKey(models.ForeignKey):
         return super().formfield(**kwargs)
 
 
-class AbstractPageManager(pages.AbstractPageManager):
+class AbstractPageQuerySet(pages.AbstractPageQuerySet):
     def active(self, *, site=None):
         return self.filter(is_active=True, site=site or current_site())
 
@@ -118,7 +118,7 @@ class AbstractPage(pages.AbstractPage):
         ],
     )
 
-    objects = AbstractPageManager()
+    objects = pages.AbstractPageManager.from_queryset(AbstractPageQuerySet)()
 
     class Meta:
         abstract = True

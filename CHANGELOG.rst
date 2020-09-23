@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Raised the minimum supported feincms3 version to 0.38.1.
+- Verified compatibility with Django 3.1.
+
 
 `0.10`_ (2020-01-09)
 ~~~~~~~~~~~~~~~~~~~~
