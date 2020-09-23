@@ -5,8 +5,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.11`_ (2020-09-23)
+~~~~~~~~~~~~~~~~~~~~
+
 - Raised the minimum supported feincms3 version to 0.38.1.
 - Verified compatibility with Django 3.1.
+- Dropped compatibility with Django<2.2.
 
 
 `0.10`_ (2020-01-09)
@@ -128,4 +133,5 @@ Change log
 .. _0.8: https://github.com/matthiask/feincms3-sites/compare/0.7...0.8
 .. _0.9: https://github.com/matthiask/feincms3-sites/compare/0.8...0.9
 .. _0.10: https://github.com/matthiask/feincms3-sites/compare/0.9...0.10
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.10...master
+.. _0.11: https://github.com/matthiask/feincms3-sites/compare/0.10...0.11
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.11...master
