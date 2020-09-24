@@ -43,6 +43,7 @@ setup(
     install_requires=[
         "Django>=2.2",
         "feincms3>=0.38.1",
+        "django-tree-queries>=0.4.1",
         'contextvars;python_version<"3.7"',
     ],
 )

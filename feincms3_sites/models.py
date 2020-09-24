@@ -118,7 +118,7 @@ class AbstractPage(pages.AbstractPage):
         ],
     )
 
-    objects = pages.AbstractPageManager.from_queryset(AbstractPageQuerySet)()
+    objects = AbstractPageQuerySet.as_manager(with_tree_fields=True)
 
     class Meta:
         abstract = True
