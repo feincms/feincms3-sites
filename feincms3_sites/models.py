@@ -137,7 +137,7 @@ class AbstractPage(pages.AbstractPage):
         exclude = [] if exclude is None else exclude
         super().clean_fields(exclude)
 
-        if not self.site_id and not self.parent_id:
+        if self.site_id is None and self.parent_id is None:
             # Using validation_error() does not work as it should, because
             # 'site' is always part of exclude, because the model field is
             # required, but the form field is not, therefore Django adds
