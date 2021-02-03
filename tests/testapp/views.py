@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404, redirect, render
-
 from feincms3.regions import Regions
 from feincms3.renderer import TemplatePluginRenderer
 

@@ -5,6 +5,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Switched from Travis CI to GitHub actions.
+
 
 `0.11`_ (2020-09-23)
 ~~~~~~~~~~~~~~~~~~~~

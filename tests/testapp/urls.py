@@ -1,9 +1,8 @@
-from django.urls import include, re_path
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
+from django.urls import include, re_path
 from testapp import views
 
 

@@ -1,6 +1,5 @@
-from django.urls import re_path
 from django.shortcuts import get_object_or_404
-
+from django.urls import re_path
 from feincms3.applications import page_for_app_request
 from feincms3.shortcuts import render_detail, render_list
 

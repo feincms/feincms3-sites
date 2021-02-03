@@ -1,10 +1,10 @@
+from content_editor.models import Region, Template, create_plugin_base
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from content_editor.models import Region, Template, create_plugin_base
 from feincms3 import plugins
 from feincms3.applications import AppsMixin, reverse_app
 from feincms3.mixins import LanguageMixin, MenuMixin, RedirectMixin, TemplateMixin
+
 from feincms3_sites.models import AbstractPage
 
 

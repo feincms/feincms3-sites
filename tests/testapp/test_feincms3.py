@@ -5,8 +5,8 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import set_urlconf
 from django.utils.translation import deactivate_all, override
-
 from feincms3.applications import NoReverseMatch, apps_urlconf
+
 from feincms3_sites.middleware import set_current_site
 from feincms3_sites.models import Site
 

@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
 from feincms3 import pages
 
 from feincms3_sites.middleware import current_site
