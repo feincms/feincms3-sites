@@ -23,7 +23,7 @@ def page_detail(request, path=None):
         return redirect(page.redirect_to_url or page.redirect_to_page)
     return render(
         request,
-        page.template.template_name,
+        page.type.template_name,
         {
             "page": page,
             "regions": Regions.from_item(

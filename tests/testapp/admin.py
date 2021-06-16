@@ -16,8 +16,7 @@ class PageAdmin(ContentEditor, TreeAdmin):
         "is_active",
         "menu",
         "language_code",
-        "template_key",
-        "application",
+        "page_type",
     ]
     list_filter = ["is_active", "menu", AncestorFilter]
     list_editable = ["is_active"]
@@ -25,13 +24,12 @@ class PageAdmin(ContentEditor, TreeAdmin):
     radio_fields = {
         "menu": admin.HORIZONTAL,
         "language_code": admin.HORIZONTAL,
-        "template_key": admin.HORIZONTAL,
-        "application": admin.HORIZONTAL,
+        "page_type": admin.HORIZONTAL,
     }
     raw_id_fields = ["parent"]
 
     fieldsets = [
-        (None, {"fields": ("is_active", "title", "parent")}),
+        (None, {"fields": ("is_active", "title", "parent", "page_type")}),
         (
             capfirst(_("path")),
             {"fields": ("site", "slug", "static_path", "path"), "classes": ("tabbed",)},
@@ -39,7 +37,7 @@ class PageAdmin(ContentEditor, TreeAdmin):
         (
             capfirst(_("settings")),
             {
-                "fields": ("menu", "language_code", "template_key", "application"),
+                "fields": ("menu", "language_code"),
                 "classes": ("tabbed",),
             },
         ),

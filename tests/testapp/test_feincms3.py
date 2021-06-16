@@ -84,10 +84,9 @@ class AppsMiddlewareTest(TestCase):
                     # 'site': self.test_site.pk,
                     "static_path": 1,
                     "language_code": "en",
-                    "application": "",
                     "is_active": 1,
                     "menu": "main",
-                    "template_key": "standard",
+                    "page_type": "standard",
                 },
                 zero_management_form_data("testapp_snippet_set"),
             ),
@@ -127,7 +126,7 @@ class AppsMiddlewareTest(TestCase):
                     static_path=False,
                     language_code=root.language_code,
                     is_active=True,
-                    application=app,
+                    page_type=app,
                     parent_id=root.pk,
                     site=self.test_site,
                 )
@@ -186,7 +185,7 @@ class AppsMiddlewareTest(TestCase):
             static_path=True,
             language_code="en",
             is_active=True,
-            application="blog",
+            page_type="blog",
             site=Site.objects.create(host="testserver3"),
         )
 
@@ -208,7 +207,7 @@ class AppsMiddlewareTest(TestCase):
             static_path=False,
             language_code="en",
             is_active=True,
-            application="blog",
+            page_type="blog",
             site=Site.objects.create(host="testserver2"),
         )
         a = Article.objects.create(title="article", category="blog")
