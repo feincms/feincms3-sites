@@ -5,7 +5,12 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.12`_ (2021-08-12)
+~~~~~~~~~~~~~~~~~~~~
+
 - Switched from Travis CI to GitHub actions.
+- Updated feincms3-sites for the latest version of feincms3.
 
 
 `0.11`_ (2020-09-23)
@@ -136,4 +141,5 @@ Change log
 .. _0.9: https://github.com/matthiask/feincms3-sites/compare/0.8...0.9
 .. _0.10: https://github.com/matthiask/feincms3-sites/compare/0.9...0.10
 .. _0.11: https://github.com/matthiask/feincms3-sites/compare/0.10...0.11
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.11...master
+.. _0.12: https://github.com/matthiask/feincms3-sites/compare/0.11...0.12
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.12...master
