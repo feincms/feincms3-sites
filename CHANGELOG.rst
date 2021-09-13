@@ -142,4 +142,4 @@ Change log
 .. _0.10: https://github.com/matthiask/feincms3-sites/compare/0.9...0.10
 .. _0.11: https://github.com/matthiask/feincms3-sites/compare/0.10...0.11
 .. _0.12: https://github.com/matthiask/feincms3-sites/compare/0.11...0.12
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.12...master
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.12...main
