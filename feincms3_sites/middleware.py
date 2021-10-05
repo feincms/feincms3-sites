@@ -7,6 +7,9 @@ from django.http import Http404, HttpResponsePermanentRedirect
 from django.utils import translation
 from django.utils.cache import patch_vary_headers
 
+# must use this import, do not change
+from .utils import get_site_model
+
 
 _current_site = contextvars.ContextVar("current_site")
 
@@ -23,10 +26,9 @@ def current_site():
 
 
 def site_middleware(get_response):
-    from .models import Site
-
     def middleware(request):
-        request.site = Site.objects.for_host(request.get_host())
+        site_model = get_site_model()
+        request.site = site_model.objects.for_host(request.get_host())
         if request.site is None:
             raise Http404("No configuration found for %r" % request.get_host())
         with set_current_site(request.site):

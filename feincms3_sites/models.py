@@ -28,7 +28,7 @@ class SiteQuerySet(models.QuerySet):
         return default
 
 
-class Site(models.Model):
+class AbstractSite(models.Model):
     is_active = models.BooleanField(_("is active"), default=True)
     is_default = models.BooleanField(_("is default"), default=False)
     host = models.CharField(_("host"), max_length=200)
@@ -53,6 +53,7 @@ class Site(models.Model):
     objects = SiteQuerySet.as_manager()
 
     class Meta:
+        abstract = True
         verbose_name = _("site")
         verbose_name_plural = _("sites")
 
@@ -82,6 +83,11 @@ class Site(models.Model):
     save.alters_data = True
 
 
+class Site(AbstractSite):
+    class Meta(AbstractSite.Meta):
+        swappable = "FEINCMS3_SITES_SITE_MODEL"
+
+
 class SiteForeignKey(models.ForeignKey):
     """
     The site foreign key field should not be required, so that we can fill in
@@ -99,9 +105,6 @@ class AbstractPageQuerySet(pages.AbstractPageQuerySet):
 
 
 class AbstractPage(pages.AbstractPage):
-    site = SiteForeignKey(
-        Site, on_delete=models.CASCADE, verbose_name=_("site"), related_name="+"
-    )
     # Exactly the same as BasePage.path,
     # except that it is not unique:
     path = models.CharField(
@@ -150,3 +153,23 @@ class AbstractPage(pages.AbstractPage):
         super().save(*args, **kwargs)
 
     save.alters_data = True
+
+    @staticmethod
+    def add_site_field(sender, **kwargs):
+        from .utils import get_site_model
+
+        # make this optional as we do not want to break existing applications
+        model_name = get_site_model()
+        # model_name = "feincms3_sites.site"
+        # if hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):
+        #     model_name = getattr(settings, "FEINCMS3_SITES_SITE_MODEL").lower()
+        if issubclass(sender, AbstractPage) and not sender._meta.abstract:
+            SiteForeignKey(
+                model_name,
+                on_delete=models.CASCADE,
+                verbose_name=_("site"),
+                related_name="+",
+            ).contribute_to_class(sender, "site")
+
+
+models.signals.class_prepared.connect(AbstractPage.add_site_field)

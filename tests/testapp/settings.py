@@ -56,3 +56,5 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+FEINCMS3_SITES_SITE_MODEL = "feincms3_sites.Site"
