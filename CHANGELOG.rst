@@ -5,6 +5,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- The site model is now swappable. (#4, #5)
+
 
 `0.12`_ (2021-08-12)
 ~~~~~~~~~~~~~~~~~~~~
