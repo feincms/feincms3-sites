@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.13`_ (2021-10-08)
+~~~~~~~~~~~~~~~~~~~~
+
 - The site model is now swappable. (#4, #5)
 
 
@@ -144,4 +148,5 @@ Change log
 .. _0.10: https://github.com/matthiask/feincms3-sites/compare/0.9...0.10
 .. _0.11: https://github.com/matthiask/feincms3-sites/compare/0.10...0.11
 .. _0.12: https://github.com/matthiask/feincms3-sites/compare/0.11...0.12
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.12...main
+.. _0.13: https://github.com/matthiask/feincms3-sites/compare/0.12...0.13
+.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.13...main
