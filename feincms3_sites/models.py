@@ -156,20 +156,13 @@ class AbstractPage(pages.AbstractPage):
 
     @staticmethod
     def add_site_field(sender, **kwargs):
-        from .utils import get_site_model
-
-        # make this optional as we do not want to break existing applications
-        model_name = get_site_model()
-        # model_name = "feincms3_sites.site"
-        # if hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):
-        #     model_name = getattr(settings, "FEINCMS3_SITES_SITE_MODEL").lower()
         if issubclass(sender, AbstractPage) and not sender._meta.abstract:
+            from .utils import get_site_model
             SiteForeignKey(
-                model_name,
+                get_site_model(),
                 on_delete=models.CASCADE,
                 verbose_name=_("site"),
                 related_name="+",
             ).contribute_to_class(sender, "site")
-
 
 models.signals.class_prepared.connect(AbstractPage.add_site_field)

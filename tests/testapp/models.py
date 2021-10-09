@@ -10,7 +10,11 @@ from feincms3.applications import (
 )
 from feincms3.mixins import LanguageMixin, MenuMixin, RedirectMixin
 
-from feincms3_sites.models import AbstractPage
+from feincms3_sites.models import AbstractPage, AbstractSite
+
+
+class CustomSite(AbstractSite):
+    title = models.CharField(max_length=100, blank=True)
 
 
 class Page(AbstractPage, PageTypeMixin, MenuMixin, LanguageMixin, RedirectMixin):

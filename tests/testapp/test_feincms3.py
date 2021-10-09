@@ -9,8 +9,9 @@ from feincms3.applications import NoReverseMatch, apps_urlconf
 
 from feincms3_sites.middleware import set_current_site
 from feincms3_sites.models import Site
+from feincms3_sites.utils import get_site_model
 
-from .models import Article, Page
+from .models import Article, Page, CustomSite
 
 
 def zero_management_form_data(prefix):
@@ -504,3 +505,53 @@ class DefaultLanguageTest(TestCase):
             "/en/",
             fetch_redirect_response=False,
         )
+
+
+class SiteModelDeclaredTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
+        deactivate_all()
+
+        if settings.USE_CUSTOM_SITE:
+            self.test_site = CustomSite.objects.create(
+                host="testserver", is_default=True, title='Test Site')
+        else:
+            self.test_site = Site.objects.create(host="testserver", is_default=True)
+
+    def test_get_site_model(self):
+        if settings.USE_CUSTOM_SITE:
+            self.assertEqual(get_site_model(), CustomSite)
+        else:
+            self.assertEqual(get_site_model(), Site)
+
+
+# The following test cases require a separate testapp each, since changing the
+# settings afterwards will result in AttributeError: Manager isn't available;
+# 'feincms3_sites.Site' has been swapped for 'missing.Model'
+#
+# @override_settings(
+#     FEINCMS3_SITES_SITE_MODEL=''
+# )
+# class SiteModelUndeclaredTest(TestCase):
+#     def setUp(self):
+#         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
+#         deactivate_all()
+#
+#         self.test_site = Site.objects.create(host="testserver", is_default=True)
+#
+#     def test_get_site_model(self):
+#         self.assertRaises(ImproperlyConfigured, get_site_model)
+#
+#
+# @override_settings(
+#     FEINCMS3_SITES_SITE_MODEL='missing.Model'
+# )
+# class SiteModelUndeclaredTest(TestCase):
+#     def setUp(self):
+#         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
+#         deactivate_all()
+#
+#         self.test_site = Site.objects.create(host="testserver", is_default=True)
+#
+#     def test_get_site_model(self):
+#         self.assertRaises(ImproperlyConfigured, get_site_model)
