@@ -5,7 +5,7 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- fixes exception when using custom site models
+- Fixed exception when using custom site models.
 
 
 `0.13`_ (2021-10-08)

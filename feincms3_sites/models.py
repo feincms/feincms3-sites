@@ -158,11 +158,13 @@ class AbstractPage(pages.AbstractPage):
     def add_site_field(sender, **kwargs):
         if issubclass(sender, AbstractPage) and not sender._meta.abstract:
             from .utils import get_site_model
+
             SiteForeignKey(
                 get_site_model(),
                 on_delete=models.CASCADE,
                 verbose_name=_("site"),
                 related_name="+",
             ).contribute_to_class(sender, "site")
+
 
 models.signals.class_prepared.connect(AbstractPage.add_site_field)
