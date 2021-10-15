@@ -507,6 +507,30 @@ class DefaultLanguageTest(TestCase):
         )
 
 
+class SiteAdminTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
+        deactivate_all()
+
+        self.test_site = Site.objects.create(host="testserver", is_default=True)
+
+    def test_default_language_list_filter(self):
+        self.client.login(username="admin", password="blabla")
+        response = self.client.get("/admin/feincms3_sites/site/")
+        self.assertContains(response, "<h3> By Default language </h3>", 1)
+        self.assertContains(
+            response,
+            '<a href="?default_language=" title="No language">No language</a>',
+            1,
+        )
+        self.assertContains(
+            response, '<a href="?default_language=en" title="English">English</a>', 1
+        )
+        self.assertContains(
+            response, '<a href="?default_language=de" title="German">German</a>', 1
+        )
+
+
 class SiteModelDeclaredTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")

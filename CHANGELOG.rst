@@ -5,6 +5,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Add DefaultLanguageListFilter to limit choices to settings.LANGUAGE
+- Add default list_filter to SiteAdmin (is_active, host, default_language)
+
+
+`0.13.1`_ (2021-10-12)
+~~~~~~~~~~~~~~~~~~~~~~
+
 - Fixed exception when using custom site models.
 
 

@@ -8,6 +8,24 @@ from django.utils.translation import gettext_lazy as _
 from .models import Site
 
 
+class DefaultLanguageListFilter(admin.SimpleListFilter):
+    """
+    Simple list filter for the default_language property.
+    """
+
+    title = capfirst(_("default language"))
+    parameter_name = "default_language"
+
+    def lookups(self, request, model_admin):
+        return [("", capfirst(_("no language")))] + list(settings.LANGUAGES)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(default_language=self.value())
+        else:
+            return queryset.all()
+
+
 class SiteForm(forms.ModelForm):
     default_language = Site._meta.get_field("default_language").formfield(
         choices=[("", "----------")] + list(settings.LANGUAGES),
@@ -42,3 +60,4 @@ class SiteAdmin(admin.ModelAdmin):
     ]
     list_editable = ["is_active", "is_default"]
     ordering = ["-is_default", "host"]
+    list_filter = ["is_active", "host", DefaultLanguageListFilter]
