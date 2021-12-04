@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponsePermanentRedirect
 from django.utils import translation
 from django.utils.cache import patch_vary_headers
+from feincms3.applications import _del_apps_urlconf_cache
 
 # must use this import, do not change
 from .utils import get_site_model
@@ -17,8 +18,10 @@ _current_site = contextvars.ContextVar("current_site")
 @contextmanager
 def set_current_site(site):
     token = _current_site.set(site)
+    _del_apps_urlconf_cache()
     yield
     _current_site.reset(token)
+    _del_apps_urlconf_cache()
 
 
 def current_site():
