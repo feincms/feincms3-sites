@@ -1,3 +1,4 @@
+import django
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured, ValidationError
@@ -517,17 +518,28 @@ class SiteAdminTest(TestCase):
     def test_default_language_list_filter(self):
         self.client.login(username="admin", password="blabla")
         response = self.client.get("/admin/feincms3_sites/site/")
+        # print(response, response.content.decode("utf-8"))
         self.assertContains(response, "<h3> By Default language </h3>", 1)
         self.assertContains(
             response,
-            '<a href="?default_language=" title="No language">No language</a>',
+            '<a href="?default_language=" title="No language">No language</a>'
+            if django.VERSION < (4, 1)
+            else '<a href="?default_language=">No language</a>',
             1,
         )
         self.assertContains(
-            response, '<a href="?default_language=en" title="English">English</a>', 1
+            response,
+            '<a href="?default_language=en" title="English">English</a>'
+            if django.VERSION < (4, 1)
+            else '<a href="?default_language=en">English</a>',
+            1,
         )
         self.assertContains(
-            response, '<a href="?default_language=de" title="German">German</a>', 1
+            response,
+            '<a href="?default_language=de" title="German">German</a>'
+            if django.VERSION < (4, 1)
+            else '<a href="?default_language=de">German</a>',
+            1,
         )
 
 
