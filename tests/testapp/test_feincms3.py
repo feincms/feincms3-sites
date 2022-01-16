@@ -134,7 +134,7 @@ class AppsMiddlewareTest(TestCase):
 
         for i in range(7):
             for category in ("publications", "blog"):
-                Article.objects.create(title="%s %s" % (category, i), category=category)
+                Article.objects.create(title=f"{category} {i}", category=category)
 
         self.assertContains(self.client.get("/de/blog/all/"), 'class="article"', 7)
         self.assertContains(self.client.get("/de/blog/?page=2"), 'class="article"', 2)
