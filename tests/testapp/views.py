@@ -1,15 +1,16 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from feincms3.regions import Regions
-from feincms3.renderer import TemplatePluginRenderer
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from feincms3.renderer import RegionRenderer, render_in_context
 
 from .models import Page, Snippet
 
 
-renderer = TemplatePluginRenderer()
-renderer.register_template_renderer(
+renderer = RegionRenderer()
+renderer.register(
     Snippet,
-    lambda plugin: plugin.template_name,
-    lambda plugin, context: {"additional": "context"},
+    lambda plugin, context: render_in_context(
+        context, plugin.template_name, {"additional": "context"}
+    ),
 )
 
 
@@ -19,15 +20,15 @@ def page_detail(request, path=None):
     )
     page.activate_language(request)
 
-    if page.redirect_to_url or page.redirect_to_page:
-        return redirect(page.redirect_to_url or page.redirect_to_page)
+    if url := page.get_redirect_url():
+        return HttpResponseRedirect(url)
     return render(
         request,
         page.type.template_name,
         {
             "page": page,
-            "regions": Regions.from_item(
-                page, renderer=renderer, inherit_from=page.ancestors().reverse()
+            "regions": renderer.regions_from_item(
+                page, inherit_from=page.ancestors().reverse()
             ),
         },
     )

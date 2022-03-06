@@ -10,7 +10,7 @@ def article_list_all(request):
     page = page_for_app_request(request)
     page.activate_language(request)
     return render_list(
-        request, Article.objects.filter(category=page.application), {"page": page}
+        request, Article.objects.filter(category=page.app_namespace), {"page": page}
     )
 
 
@@ -19,7 +19,7 @@ def article_list(request):
     page.activate_language(request)
     return render_list(
         request,
-        Article.objects.filter(category=page.application),
+        Article.objects.filter(category=page.app_namespace),
         {"page": page},
         paginate_by=5,
     )
@@ -32,6 +32,7 @@ def article_detail(request, pk):
 
 
 app_name = "articles"
+ignore_app_name_mismatch = True
 urlpatterns = [
     re_path(r"^all/$", article_list_all, name="article-list-all"),
     re_path(r"^$", article_list, name="article-list"),

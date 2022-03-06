@@ -51,13 +51,8 @@ class Page(AbstractPage, PageTypeMixin, MenuMixin, LanguageMixin, RedirectMixin)
         ApplicationType(
             key="stuff-with-required",
             title="stuff-with-required",
-            urlconf="stuff-with-required",
+            urlconf="importable_module",
             required_fields=("optional", "not_editable"),
-        ),
-        ApplicationType(
-            key="translated-articles",
-            title=_("translated articles"),
-            urlconf="testapp.translated_articles_urls",
         ),
     ]
 
