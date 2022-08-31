@@ -519,7 +519,7 @@ class SiteAdminTest(TestCase):
         self.client.login(username="admin", password="blabla")
         response = self.client.get("/admin/feincms3_sites/site/")
         # print(response, response.content.decode("utf-8"))
-        self.assertContains(response, "<h3> By Default language </h3>", 1)
+        self.assertContains(response, "By Default language", 1)
         self.assertContains(
             response,
             '<a href="?default_language=" title="No language">No language</a>'

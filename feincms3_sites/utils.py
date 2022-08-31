@@ -15,9 +15,10 @@ def get_site_model():
 
     try:
         # make this optional as we do not want to break existing applications
-        model_name = "feincms3_sites.site"
-        if hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):
-            model_name = getattr(settings, "FEINCMS3_SITES_SITE_MODEL").lower()
+        model_name = (
+            getattr(settings, "FEINCMS3_SITES_SITE_MODEL", None)
+            or "feincms3_sites.site"
+        )
         return django_apps.get_model(model_name, require_ready=False)
     except ValueError:
         raise ImproperlyConfigured(
