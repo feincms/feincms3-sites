@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.14`_ (2022-08-13)
+~~~~~~~~~~~~~~~~~~~~
+
 - Add DefaultLanguageListFilter to limit choices to settings.LANGUAGE
 - Add default list_filter to SiteAdmin (is_active, host, default_language)
 - Added Python 3.10, Django 4.0 and 4.1 to the CI.
