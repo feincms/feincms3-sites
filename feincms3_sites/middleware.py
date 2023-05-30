@@ -31,25 +31,24 @@ def current_site():
 def site_middleware(get_response):
     def middleware(request):
         site_model = get_site_model()
-        request.site = site_model.objects.for_host(request.get_host())
-        if request.site is None:
-            raise Http404("No configuration found for %r" % request.get_host())
-        with set_current_site(request.site):
-            return get_response(request)
+        if site := site_model.objects.for_host(request.get_host()):
+            with set_current_site(site):
+                return get_response(request)
+        raise Http404("No configuration found for %r" % request.get_host())
 
     return middleware
 
 
 def redirect_to_site_middleware(get_response):
     def middleware(request):
-        if not hasattr(request, "site"):
+        site = current_site()
+        if not site:
             raise ImproperlyConfigured(
-                'No "site" attribute on request. Insert site_middleware'
-                " before redirect_to_site_middleware."
+                "Current site unknown. Insert site_middleware before redirect_to_site_middleware."
             )
 
         # Host matches, and either no HTTPS enforcement or already HTTPS
-        if request.get_host() == request.site.host and (
+        if request.get_host() == site.host and (
             not settings.SECURE_SSL_REDIRECT or request.is_secure()
         ):
             return get_response(request)
@@ -57,7 +56,7 @@ def redirect_to_site_middleware(get_response):
         return HttpResponsePermanentRedirect(
             "http{}://{}{}".format(
                 "s" if (settings.SECURE_SSL_REDIRECT or request.is_secure()) else "",
-                request.site,
+                site.host,
                 request.get_full_path(),
             )
         )
@@ -67,17 +66,16 @@ def redirect_to_site_middleware(get_response):
 
 def default_language_middleware(get_response):
     def middleware(request):
-        if not hasattr(request, "site"):
+        site = current_site()
+        if not site:
             raise ImproperlyConfigured(
-                'No "site" attribute on request. Insert site_middleware'
-                " before default_language_middleware."
+                "Current site unknown. Insert site_middleware before default_language_middleware."
             )
 
         # No i18n_patterns handling for now.
-        if request.site.default_language:
-            language = request.site.default_language
-        else:
-            language = translation.get_language_from_request(request)
+        language = site.default_language or translation.get_language_from_request(
+            request
+        )
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
 

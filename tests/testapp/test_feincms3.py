@@ -360,9 +360,7 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
 )
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
-        with self.assertRaisesRegex(
-            ImproperlyConfigured, 'No "site" attribute on request.'
-        ):
+        with self.assertRaisesRegex(ImproperlyConfigured, "Current site unknown."):
             self.client.get("/de/", HTTP_HOST="example.com")
 
 
@@ -447,9 +445,7 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
 )
 class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
-        with self.assertRaisesRegex(
-            ImproperlyConfigured, 'No "site" attribute on request.'
-        ):
+        with self.assertRaisesRegex(ImproperlyConfigured, "Current site unknown."):
             self.client.get("/de/", HTTP_HOST="example.com")
 
 

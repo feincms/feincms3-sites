@@ -7,6 +7,8 @@ Change log
 
 - Added Python 3.11, Django 4.2 to the CI. Removed Django 4.0.
 - Switched to hatchling and ruff.
+- Stopped setting ``request.site``; the current site is available using
+  ``current_site()``.
 
 
 `0.14`_ (2022-08-13)
