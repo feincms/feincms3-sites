@@ -4,8 +4,8 @@ from contextlib import contextmanager
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponsePermanentRedirect
-from django.utils import translation
 from django.utils.cache import patch_vary_headers
+from django.utils.translation import activate, get_language, get_language_from_request
 from feincms3.applications import _del_apps_urlconf_cache
 
 # must use this import, do not change
@@ -73,17 +73,15 @@ def default_language_middleware(get_response):
             )
 
         # No i18n_patterns handling for now.
-        language = site.default_language or translation.get_language_from_request(
-            request
-        )
-        translation.activate(language)
-        request.LANGUAGE_CODE = translation.get_language()
+        language = site.default_language or get_language_from_request(request)
+        activate(language)
+        request.LANGUAGE_CODE = get_language()
 
         response = get_response(request)
 
         # Maybe not necessary, but do not take chances.
         patch_vary_headers(response, ("Accept-Language",))
-        response.setdefault("Content-Language", translation.get_language())
+        response.setdefault("Content-Language", get_language())
         return response
 
     return middleware
