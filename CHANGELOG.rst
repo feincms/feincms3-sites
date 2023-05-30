@@ -2,8 +2,12 @@
 Change log
 ==========
 
-`Next version`_
-~~~~~~~~~~~~~~~
+Next version
+~~~~~~~~~~~~
+
+
+0.15 (2023-05-30)
+~~~~~~~~~~~~~~~~~
 
 - Added Python 3.11, Django 4.2 to the CI. Removed Django 4.0.
 - Switched to hatchling and ruff.
@@ -20,8 +24,8 @@ Change log
 - Raised the requirements to Python >= 3.8, Django >= 3.2.
 
 
-`0.13.1`_ (2021-10-12)
-~~~~~~~~~~~~~~~~~~~~~~
+0.13.1 (2021-10-12)
+~~~~~~~~~~~~~~~~~~~
 
 - Fixed exception when using custom site models.
 
@@ -169,4 +173,4 @@ Change log
 .. _0.11: https://github.com/matthiask/feincms3-sites/compare/0.10...0.11
 .. _0.12: https://github.com/matthiask/feincms3-sites/compare/0.11...0.12
 .. _0.13: https://github.com/matthiask/feincms3-sites/compare/0.12...0.13
-.. _Next version: https://github.com/matthiask/feincms3-sites/compare/0.13...main
+.. _0.14: https://github.com/matthiask/feincms3-sites/compare/0.13...0.14
