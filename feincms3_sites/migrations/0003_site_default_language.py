@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("feincms3_sites", "0002_site_is_managed_re")]
 
     operations = [

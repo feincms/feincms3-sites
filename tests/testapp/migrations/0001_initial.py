@@ -9,7 +9,6 @@ import feincms3_sites.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

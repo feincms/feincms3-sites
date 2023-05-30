@@ -5,7 +5,7 @@ from django.contrib.admin import widgets
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
-from .models import Site
+from feincms3_sites.models import Site
 
 
 class DefaultLanguageListFilter(admin.SimpleListFilter):
@@ -34,7 +34,7 @@ class SiteForm(forms.ModelForm):
 
     class Meta:
         model = Site
-        fields = "__all__"
+        fields = "__all__"  # noqa: DJ007
 
 
 @admin.register(Site)

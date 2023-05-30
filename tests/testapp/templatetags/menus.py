@@ -3,6 +3,7 @@ from collections import defaultdict
 from django import template
 from django.db.models import Q
 from django.utils.translation import get_language
+
 from testapp.models import Page
 
 

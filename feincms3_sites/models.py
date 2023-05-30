@@ -60,6 +60,12 @@ class AbstractSite(models.Model):
     def __str__(self):
         return self.host
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    save.alters_data = True
+
     def clean(self):
         if self.is_managed_re:
             self.host_re = r"^%s$" % re.escape(self.host)
@@ -69,18 +75,12 @@ class AbstractSite(models.Model):
         except Exception as exc:
             raise ValidationError(
                 _("Error while validating the regular expression: %s") % exc
-            )
+            ) from exc
         else:
             if not match:
                 raise ValidationError(
                     _("The regular expression does not match the host.")
                 )
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    save.alters_data = True
 
 
 class Site(AbstractSite):
@@ -157,7 +157,7 @@ class AbstractPage(pages.AbstractPage):
     @staticmethod
     def add_site_field(sender, **kwargs):
         if issubclass(sender, AbstractPage) and not sender._meta.abstract:
-            from .utils import get_site_model
+            from feincms3_sites.utils import get_site_model
 
             SiteForeignKey(
                 get_site_model(),

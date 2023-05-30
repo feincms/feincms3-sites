@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("feincms3_sites", "0003_site_default_language")]
 
     operations = [

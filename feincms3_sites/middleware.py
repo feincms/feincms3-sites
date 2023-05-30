@@ -9,7 +9,7 @@ from django.utils.cache import patch_vary_headers
 from feincms3.applications import _del_apps_urlconf_cache
 
 # must use this import, do not change
-from .utils import get_site_model
+from feincms3_sites.utils import get_site_model
 
 
 _current_site = contextvars.ContextVar("current_site")
@@ -55,8 +55,7 @@ def redirect_to_site_middleware(get_response):
             return get_response(request)
 
         return HttpResponsePermanentRedirect(
-            "http%s://%s%s"
-            % (
+            "http{}://{}{}".format(
                 "s" if (settings.SECURE_SSL_REDIRECT or request.is_secure()) else "",
                 request.site,
                 request.get_full_path(),

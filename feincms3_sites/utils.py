@@ -20,12 +20,12 @@ def get_site_model():
             or "feincms3_sites.site"
         )
         return django_apps.get_model(model_name, require_ready=False)
-    except ValueError:
+    except ValueError as exc:
         raise ImproperlyConfigured(
             "FEINCMS3_SITES_SITE_MODEL must be of the form 'app_label.model_name'"
-        )
-    except LookupError:
+        ) from exc
+    except LookupError as exc:
         raise ImproperlyConfigured(
             "FEINCMS3_SITES_SITE_MODEL refers to model '%s' that has not been installed"
             % model_name
-        )
+        ) from exc

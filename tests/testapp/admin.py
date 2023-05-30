@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from feincms3 import plugins
 from feincms3.admin import AncestorFilter, TreeAdmin
 
-from . import models
+from testapp import models
 
 
 @admin.register(models.Page)

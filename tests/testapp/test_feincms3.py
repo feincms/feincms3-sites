@@ -11,8 +11,7 @@ from feincms3.applications import NoReverseMatch, apps_urlconf
 from feincms3_sites.middleware import set_current_site
 from feincms3_sites.models import Site
 from feincms3_sites.utils import get_site_model
-
-from .models import Article, CustomSite, Page
+from testapp.models import Article, CustomSite, Page
 
 
 def zero_management_form_data(prefix):
