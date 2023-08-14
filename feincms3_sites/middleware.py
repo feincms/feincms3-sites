@@ -2,10 +2,17 @@ import contextvars
 from contextlib import contextmanager
 
 from django.conf import settings
+from django.conf.urls.i18n import is_language_prefix_patterns_used
 from django.core.exceptions import ImproperlyConfigured
-from django.http import Http404, HttpResponsePermanentRedirect
+from django.http import Http404, HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.urls import get_script_prefix, is_valid_path
 from django.utils.cache import patch_vary_headers
-from django.utils.translation import activate, get_language, get_language_from_request
+from django.utils.translation import (
+    activate,
+    get_language,
+    get_language_from_path,
+    get_language_from_request,
+)
 from feincms3.applications import _del_apps_urlconf_cache
 
 # must use this import, do not change
@@ -72,12 +79,49 @@ def default_language_middleware(get_response):
                 "Current site unknown. Insert site_middleware before default_language_middleware."
             )
 
-        # No i18n_patterns handling for now.
-        language = site.default_language or get_language_from_request(request)
+        urlconf = getattr(request, "urlconf", settings.ROOT_URLCONF)
+        (
+            i18n_patterns_used,
+            prefixed_default_language,
+        ) = is_language_prefix_patterns_used(urlconf)
+
+        language = None
+        if i18n_patterns_used:
+            language = get_language_from_path(request.path_info)
+        if language is None:
+            language = site.default_language or get_language_from_request(request)
+
         activate(language)
         request.LANGUAGE_CODE = get_language()
 
         response = get_response(request)
+
+        if (
+            response.status_code == 404
+            and i18n_patterns_used
+            and prefixed_default_language
+        ):
+            language_path = f"/{language}{request.path_info}"
+            path_valid = is_valid_path(language_path, urlconf)
+            path_needs_slash = not path_valid and (
+                settings.APPEND_SLASH
+                and not language_path.endswith("/")
+                and is_valid_path("%s/" % language_path, urlconf)
+            )
+
+            if path_valid or path_needs_slash:
+                script_prefix = get_script_prefix()
+                # Insert language after the script prefix and before the
+                # rest of the URL
+                language_url = request.get_full_path(
+                    force_append_slash=path_needs_slash
+                ).replace(script_prefix, f"{script_prefix}{language}/", 1)
+                # Redirect to the language-specific URL as detected by
+                # get_language_from_request(). HTTP caches may cache this
+                # redirect, so add the Vary header.
+                redirect = HttpResponseRedirect(language_url)
+                patch_vary_headers(redirect, ("Accept-Language", "Cookie"))
+                return redirect
 
         # Maybe not necessary, but do not take chances.
         patch_vary_headers(response, ("Accept-Language",))

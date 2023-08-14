@@ -65,14 +65,12 @@ extend-select = [
   "FBT",
   # flake8-bugbear
   "B",
-  # flake8-builtins
-  "A",
   # flake8-comprehensions
   "C4",
   # flake8-django
   "DJ",
-  # flake8-logging-format
-  "G",
+  # flake8-implicit-string-concatenation
+  "ISC",
   # flake8-pie
   "PIE",
   # flake8-simplify
@@ -82,7 +80,7 @@ extend-select = [
   # pygrep-hooks
   "PGH",
   # pylint
-  "PL",
+  "PLC", "PLE", "PLW",
   # unused noqa
   "RUF100",
 ]

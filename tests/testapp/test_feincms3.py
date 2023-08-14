@@ -502,6 +502,30 @@ class DefaultLanguageTest(TestCase):
             fetch_redirect_response=False,
         )
 
+    def test_i18n_patterns(self):
+        """i18n_patterns in ROOT_URLCONF work even with apps_middleware"""
+
+        # site = Site.objects.create(host="example.com", default_language="en")
+        site = Site.objects.create(host="example.com")
+
+        self.assertRedirects(
+            self.client.get("/i18n/", HTTP_HOST=site.host), "/en/i18n/"
+        )
+
+        self.assertContains(self.client.get("/en/i18n/", HTTP_HOST=site.host), "en")
+        self.assertContains(self.client.get("/de/i18n/", HTTP_HOST=site.host), "de")
+
+        self.assertRedirects(
+            self.client.get("/i18n/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
+            "/de/i18n/",
+        )
+        site.default_language = "en"
+        site.save()
+        self.assertRedirects(
+            self.client.get("/i18n/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
+            "/en/i18n/",
+        )
+
 
 class SiteAdminTest(TestCase):
     def setUp(self):
