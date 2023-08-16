@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+0.16 (2023-08-16)
+~~~~~~~~~~~~~~~~~
+
 - Added basic support for ``i18n_patterns`` to the
   ``default_language_middleware``.
 
