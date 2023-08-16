@@ -26,6 +26,7 @@ STATIC_ROOT = os.path.join(BASEDIR, "static/")
 SECRET_KEY = "supersikret"
 LOGIN_REDIRECT_URL = "/?login=1"
 ALLOWED_HOSTS = ["*"]
+USE_TZ = True
 
 ROOT_URLCONF = "testapp.urls"
 LANGUAGES = (("en", "English"), ("de", "German"))
