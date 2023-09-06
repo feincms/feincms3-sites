@@ -428,6 +428,12 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.org/")
 
+    @override_settings(DEBUG=True)
+    def test_debug(self):
+        response = self.client.get("/", HTTP_HOST="example.org", secure=True)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], "https://example.com/")
+
 
 @override_settings(
     MIDDLEWARE=[

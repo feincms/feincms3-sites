@@ -60,7 +60,10 @@ def redirect_to_site_middleware(get_response):
         ):
             return get_response(request)
 
-        return HttpResponsePermanentRedirect(
+        redirect_class = (
+            HttpResponseRedirect if settings.DEBUG else HttpResponsePermanentRedirect
+        )
+        return redirect_class(
             "http{}://{}{}".format(
                 "s" if (settings.SECURE_SSL_REDIRECT or request.is_secure()) else "",
                 site.host,
