@@ -5,6 +5,10 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+
+0.17 (2023-09-06)
+~~~~~~~~~~~~~~~~~
+
 - Stopped ``redirect_to_site_middleware`` from using permanent redirects if
   ``DEBUG`` is ``True``.
 
