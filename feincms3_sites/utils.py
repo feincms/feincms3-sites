@@ -13,12 +13,8 @@ def get_site_model():
     ```
     """
 
+    model_name = settings.FEINCMS3_SITES_SITE_MODEL
     try:
-        # make this optional as we do not want to break existing applications
-        model_name = (
-            getattr(settings, "FEINCMS3_SITES_SITE_MODEL", None)
-            or "feincms3_sites.site"
-        )
         return django_apps.get_model(model_name, require_ready=False)
     except ValueError as exc:
         raise ImproperlyConfigured(

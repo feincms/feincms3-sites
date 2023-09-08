@@ -8,7 +8,7 @@ from django.urls import set_urlconf
 from django.utils.translation import deactivate_all, override
 from feincms3.applications import NoReverseMatch, apps_urlconf
 
-from feincms3_sites.middleware import set_current_site
+from feincms3_sites.middleware import build_absolute_uri, set_current_site, set_hosts
 from feincms3_sites.models import Site
 from feincms3_sites.utils import get_site_model
 from testapp.models import Article, CustomSite, Page
@@ -300,6 +300,49 @@ class AppsMiddlewareTest(TestCase):
         self.test_site.save()
 
         self.assertEqual(self.client.get("/de/").status_code, 404)
+
+    def test_site_foreignkey_deconstruct(self):
+        deconstructed = Page._meta.get_field("site").deconstruct()
+        self.assertEqual(deconstructed[0], "site")
+        self.assertEqual(deconstructed[1], "django.db.models.ForeignKey")
+
+    def test_absolute_uri(self):
+        # No site defined
+        self.assertEqual(
+            build_absolute_uri("/test/"),
+            "/test/",
+        )
+
+        # Manual
+        self.assertEqual(
+            build_absolute_uri("/test/", site=self.test_site),
+            "http://testserver/test/",
+        )
+        self.assertEqual(
+            build_absolute_uri("/test/", site=self.test_site.pk),
+            "http://testserver/test/",
+        )
+        self.assertEqual(
+            build_absolute_uri("http://example.com/test/", site=self.test_site.pk),
+            "http://example.com/test/",
+        )
+
+        # Context
+        with set_current_site(self.test_site):
+            self.assertEqual(
+                build_absolute_uri("/test/"),
+                "http://testserver/test/",
+            )
+        with set_hosts({3: "blub.example.com"}):
+            self.assertEqual(
+                build_absolute_uri("/test/", site=3),
+                "http://blub.example.com/test/",
+            )
+        with override_settings(SECURE_SSL_REDIRECT=True):
+            self.assertEqual(
+                build_absolute_uri("/test/", site=self.test_site),
+                "https://testserver/test/",
+            )
 
 
 @override_settings(

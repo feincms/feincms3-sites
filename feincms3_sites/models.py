@@ -11,7 +11,7 @@ from feincms3.utils import ChoicesCharField
 from feincms3_sites.middleware import current_site, site_for_host
 
 
-if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no branch
+if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no cover
     settings.FEINCMS3_SITES_SITE_MODEL = "feincms3_sites.Site"
 
 
