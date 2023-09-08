@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from feincms3 import pages
 from feincms3.utils import ChoicesCharField
 
-from feincms3_sites.middleware import current_site
+from feincms3_sites.middleware import current_site, site_for_host
 
 
 if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no branch
@@ -24,13 +24,7 @@ class SiteQuerySet(models.QuerySet):
     """
 
     def for_host(self, host):
-        default = None
-        for site in self.filter(is_active=True).order_by("-is_default", "pk"):
-            if re.search(site.host_re, host):
-                return site
-            elif site.is_default:
-                default = site
-        return default
+        return site_for_host(host, sites=self)
 
 
 class AbstractSite(models.Model):

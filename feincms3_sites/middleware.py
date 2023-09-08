@@ -1,5 +1,7 @@
 import contextvars
+import re
 from contextlib import contextmanager
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.conf.urls.i18n import is_language_prefix_patterns_used
@@ -7,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.urls import get_script_prefix, is_valid_path
 from django.utils.cache import patch_vary_headers
+from django.utils.encoding import iri_to_uri
 from django.utils.translation import (
     activate,
     get_language,
@@ -19,7 +22,47 @@ from feincms3.applications import _del_apps_urlconf_cache
 from feincms3_sites.utils import get_site_model
 
 
-_current_site = contextvars.ContextVar("current_site")
+_current_site = contextvars.ContextVar("current_site", default=None)
+_hosts = contextvars.ContextVar("hosts", default={})
+
+
+def site_for_host(host, *, sites=None):
+    """
+    Return a site instance for the passed host, or ``None`` if there is no
+    match and no default site.
+
+    The default site's host regex is tested first.
+    """
+
+    if sites is None:
+        sites = get_site_model()._default_manager.filter(is_active=True)
+    default = None
+    for site in sorted(sites, key=lambda site: (-site.is_default, site.pk)):
+        if re.search(site.host_re, host):
+            return site
+        elif site.is_default:
+            default = site
+    return default
+
+
+def _protocol():
+    return "https:" if settings.SECURE_SSL_REDIRECT else "http:"
+
+
+def _get_hosts():
+    return _hosts.get() or {
+        site.pk: site.host
+        for site in get_site_model()._default_manager.filter(is_active=True)
+    }
+
+
+def build_absolute_uri(url, *, site=None):
+    site = site or current_site()
+    if hasattr(site, "pk"):
+        site = site.pk
+    if site and (host := _get_hosts().get(site)):
+        return iri_to_uri(urljoin(f"{_protocol()}//{host}", url))
+    return url
 
 
 @contextmanager
@@ -32,15 +75,24 @@ def set_current_site(site):
 
 
 def current_site():
-    return _current_site.get(None)
+    return _current_site.get()
+
+
+@contextmanager
+def set_hosts(hosts):
+    token = _hosts.set(hosts)
+    yield
+    _hosts.reset(token)
 
 
 def site_middleware(get_response):
     site_model = get_site_model()
 
     def middleware(request):
-        if site := site_model.objects.for_host(request.get_host()):
-            with set_current_site(site):
+        sites = site_model._default_manager.filter(is_active=True)
+        if site := site_for_host(request.get_host(), sites=sites):
+            hosts = {site.pk: site.host for site in sites}
+            with set_hosts(hosts), set_current_site(site):
                 return get_response(request)
         raise Http404("No configuration found for %r" % request.get_host())
 

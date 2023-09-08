@@ -9,6 +9,14 @@ Next version
   themselves if they are happy with the default site model.
 - Changed the model definitions to avoid even more migrations because of
   changing choices, hide irrelevant field subclasses.
+- Added utilities for only showing objects for some parent object's site in the
+  admin interface, see ``feincms3_sites.fields``. Everything is ugly and
+  subject to change.
+- Stopped calling ``get_site_model`` for each request, once on startup is
+  enough.
+- Added utilities for building absolute URIs; for example you can now call
+  ``feincms3_sites.middleware.build_absolute_uri(url, site=...)`` in your code
+  to hopefully add an appropriate protocol and host to a given URL.
 
 
 0.17 (2023-09-06)
