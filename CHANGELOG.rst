@@ -7,6 +7,8 @@ Next version
 
 - Stopped requiring users of the library to set ``FEINCMS3_SITES_SITE_MODEL``
   themselves if they are happy with the default site model.
+- Changed the model definitions to avoid even more migrations because of
+  changing choices, hide irrelevant field subclasses.
 
 
 0.17 (2023-09-06)

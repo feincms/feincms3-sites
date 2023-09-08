@@ -5,8 +5,6 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
-import feincms3_sites.models
-
 
 class Migration(migrations.Migration):
     initial = True
@@ -161,7 +159,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "site",
-                    feincms3_sites.models.SiteForeignKey(
+                    models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="+",
                         to=settings.FEINCMS3_SITES_SITE_MODEL,

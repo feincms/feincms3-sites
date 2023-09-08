@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from feincms3 import pages
+from feincms3.utils import ChoicesCharField
 
 from feincms3_sites.middleware import current_site
 
@@ -42,11 +43,10 @@ class AbstractSite(models.Model):
         help_text=_("Deactivate this to specify the regex yourself."),
     )
     host_re = models.CharField(_("host regular expression"), max_length=200, blank=True)
-    default_language = models.CharField(
+    default_language = ChoicesCharField(
         _("default language"),
         max_length=10,
         blank=True,
-        # Not settings.LANGUAGES to avoid migrations for changing choices.
         choices=global_settings.LANGUAGES,
         help_text=_(
             "The default language will be overridden by more specific settings"
@@ -97,6 +97,10 @@ class SiteForeignKey(models.ForeignKey):
     The site foreign key field should not be required, so that we can fill in
     a value from the parent.
     """
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        return name, "django.db.models.ForeignKey", args, kwargs
 
     def formfield(self, **kwargs):
         kwargs["required"] = False
