@@ -17,6 +17,7 @@ Next version
 - Added utilities for building absolute URIs; for example you can now call
   ``feincms3_sites.middleware.build_absolute_uri(url, site=...)`` in your code
   to hopefully add an appropriate protocol and host to a given URL.
+- Dropped support for Python 3.8.
 
 
 0.17 (2023-09-06)
