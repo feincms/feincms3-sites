@@ -36,8 +36,9 @@ def current_site():
 
 
 def site_middleware(get_response):
+    site_model = get_site_model()
+
     def middleware(request):
-        site_model = get_site_model()
         if site := site_model.objects.for_host(request.get_host()):
             with set_current_site(site):
                 return get_response(request)
