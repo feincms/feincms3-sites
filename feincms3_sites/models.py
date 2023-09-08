@@ -1,6 +1,6 @@
 import re
 
-from django.conf import global_settings
+from django.conf import global_settings, settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -8,6 +8,10 @@ from django.utils.translation import gettext_lazy as _
 from feincms3 import pages
 
 from feincms3_sites.middleware import current_site
+
+
+if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no branch
+    settings.FEINCMS3_SITES_SITE_MODEL = "feincms3_sites.Site"
 
 
 class SiteQuerySet(models.QuerySet):
