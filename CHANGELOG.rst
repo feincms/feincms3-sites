@@ -5,6 +5,10 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Added an undocumented ``reverse_site_app`` wrapper around ``reverse_app`` and
+  ``build_absolute_uri`` which allows reversing URLs from the current and other
+  sites, without caring if a site is active currently.
+
 
 0.18 (2023-09-08)
 ~~~~~~~~~~~~~~~~~

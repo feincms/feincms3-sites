@@ -1,11 +1,14 @@
 import contextvars
 import re
+import sys
 from contextlib import contextmanager
 from urllib.parse import urljoin
 
+from asgiref.local import Local
 from django.conf import settings
 from django.conf.urls.i18n import is_language_prefix_patterns_used
 from django.core.exceptions import ImproperlyConfigured
+from django.core.signals import request_finished
 from django.http import Http404, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.urls import get_script_prefix, is_valid_path
 from django.utils.cache import patch_vary_headers
@@ -16,7 +19,8 @@ from django.utils.translation import (
     get_language_from_path,
     get_language_from_request,
 )
-from feincms3.applications import _del_apps_urlconf_cache
+from feincms3 import applications
+from feincms3.applications import _del_apps_urlconf_cache, apps_urlconf, reverse_app
 
 # must use this import, do not change
 from feincms3_sites.utils import get_site_model
@@ -63,6 +67,36 @@ def build_absolute_uri(url, *, site=None):
     if site and (host := _get_hosts().get(site)):
         return iri_to_uri(urljoin(f"{_protocol()}//{host}", url))
     return url
+
+
+def _del_site_apps_urlconf_cache(**kwargs):
+    _site_apps_urlconf_cache.cache = {}
+
+
+_site_apps_urlconf_cache = Local()
+request_finished.connect(_del_site_apps_urlconf_cache)
+
+
+def reverse_site_app(*args, site, **kwargs):
+    cs = current_site()
+    if not cs or cs.pk != site:
+        if not hasattr(_site_apps_urlconf_cache, "cache"):
+            _site_apps_urlconf_cache.cache = {}
+        cache_key = site.pk if hasattr(site, "pk") else site
+
+        if (
+            urlconf := _site_apps_urlconf_cache.cache.get(cache_key)
+        ) and urlconf in sys.modules:
+            kwargs["urlconf"] = urlconf
+        else:
+            apps = applications._APPS_MODEL._default_manager.active(
+                site=site
+            ).applications()
+            kwargs["urlconf"] = _site_apps_urlconf_cache.cache[
+                cache_key
+            ] = apps_urlconf(apps=apps)
+
+    return build_absolute_uri(reverse_app(*args, **kwargs), site=site)
 
 
 @contextmanager
