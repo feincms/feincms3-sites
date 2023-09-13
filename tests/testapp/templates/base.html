@@ -8,9 +8,9 @@
 
   {% menus as menus %}
   <nav class="nav-main">
-  {% for main, children in menus.main|group_by_tree %}
+  {% for p in menus.main %}
 
-    <a {% if page and main.id in page.tree_path %}class="active"{% endif %} href="{{ main.get_absolute_url }}">{{ main.title }}</a>
+    <a {% if page and p.id in page.tree_path %}class="active"{% endif %} href="{{ p.get_absolute_url }}">{{ p.title }}</a>
 
       {% if children %}
       <nav>

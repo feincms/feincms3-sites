@@ -13,38 +13,7 @@ register = template.Library()
 @register.simple_tag
 def menus():
     menus = defaultdict(list)
-    pages = (
-        Page.objects.active()
-        .filter(Q(language_code=get_language()), ~Q(menu=""))
-        .extra(where=["tree_depth BETWEEN 1 AND 2"])
-    )
+    pages = Page.objects.active().filter(Q(language_code=get_language()), ~Q(menu=""))
     for page in pages:
         menus[page.menu].append(page)
     return menus
-
-
-@register.filter
-def group_by_tree(iterable):
-    """
-    Given a list of pages in tree order, generate pairs consisting of the
-    parents and their descendants in a list.
-    """
-
-    parent = None
-    children = []
-    depth = -1
-
-    for element in iterable:
-        if parent is None or element.tree_depth == depth:
-            if parent:
-                yield parent, children
-                parent = None
-                children = []
-
-            parent = element
-            depth = element.tree_depth
-        else:
-            children.append(element)
-
-    if parent:
-        yield parent, children

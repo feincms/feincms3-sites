@@ -69,33 +69,26 @@ def build_absolute_uri(url, *, site=None):
     return url
 
 
-def _del_site_apps_urlconf_cache(**kwargs):
-    _site_apps_urlconf_cache.cache = {}
+def _del_reverse_site_cache(**kwargs):
+    _reverse_site_cache.cache = {}
 
 
-_site_apps_urlconf_cache = Local()
-request_finished.connect(_del_site_apps_urlconf_cache)
+_reverse_site_cache = Local()
+request_finished.connect(_del_reverse_site_cache)
 
 
 def reverse_site_app(*args, site, **kwargs):
-    cs = current_site()
-    if not cs or cs.pk != site:
-        if not hasattr(_site_apps_urlconf_cache, "cache"):
-            _site_apps_urlconf_cache.cache = {}
-        cache_key = site.pk if hasattr(site, "pk") else site
+    if not hasattr(_reverse_site_cache, "cache"):
+        _reverse_site_cache.cache = {}
+    key = site.pk if hasattr(site, "pk") else site
 
-        if (
-            urlconf := _site_apps_urlconf_cache.cache.get(cache_key)
-        ) and urlconf in sys.modules:
-            kwargs["urlconf"] = urlconf
-        else:
-            apps = applications._APPS_MODEL._default_manager.active(
-                site=site
-            ).applications()
-            kwargs["urlconf"] = _site_apps_urlconf_cache.cache[
-                cache_key
-            ] = apps_urlconf(apps=apps)
-
+    if (urlconf := _reverse_site_cache.cache.get(key)) and urlconf in sys.modules:
+        kwargs["urlconf"] = urlconf
+    else:
+        apps = applications._APPS_MODEL._default_manager.active(
+            site=site
+        ).applications()
+        kwargs["urlconf"] = _reverse_site_cache.cache[key] = apps_urlconf(apps=apps)
     return build_absolute_uri(reverse_app(*args, **kwargs), site=site)
 
 

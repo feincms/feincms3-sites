@@ -6,9 +6,15 @@ from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import set_urlconf
 from django.utils.translation import deactivate_all, override
-from feincms3.applications import NoReverseMatch, apps_urlconf
+from feincms3.applications import NoReverseMatch, _del_apps_urlconf_cache, apps_urlconf
 
-from feincms3_sites.middleware import build_absolute_uri, set_current_site, set_hosts
+from feincms3_sites.middleware import (
+    _del_reverse_site_cache,
+    build_absolute_uri,
+    set_current_site,
+    set_hosts,
+    site_for_host,
+)
 from feincms3_sites.models import Site
 from feincms3_sites.utils import get_site_model
 from testapp.models import Article, CustomSite, Page
@@ -43,6 +49,9 @@ class AppsMiddlewareTest(TestCase):
         deactivate_all()
 
         self.test_site = Site.objects.create(host="testserver", is_default=True)
+
+        _del_apps_urlconf_cache()
+        _del_reverse_site_cache()
 
     def login(self):
         client = Client()
@@ -229,6 +238,64 @@ class AppsMiddlewareTest(TestCase):
         with set_current_site(page.site):
             self.assertEqual(apps_urlconf(), "urlconf_01c07a48384868b2300536767c9879e2")
 
+    def test_reverse_site_app_caching(self):
+        """reverse_site_app caches URLconf module names and doesn't repeat queries"""
+
+        Page.objects.create(
+            title="blog",
+            slug="blog",
+            static_path=False,
+            language_code="en",
+            is_active=True,
+            page_type="blog",
+            site=self.test_site,
+        )
+        a1 = Article.objects.create(
+            title="article", category="blog", site=self.test_site
+        )
+
+        page = Page.objects.create(
+            title="blog",
+            slug="blog",
+            static_path=False,
+            language_code="en",
+            is_active=True,
+            page_type="blog",
+            site=Site.objects.create(host="testserver2"),
+        )
+        a2 = Article.objects.create(title="article", category="blog", site=page.site)
+
+        with self.assertNumQueries(2):
+            # 1. pages with apps
+            # 2. hosts
+            self.assertEqual(
+                a1.get_absolute_url(),
+                f"http://testserver/blog/{a1.pk}/",
+            )
+
+        _del_apps_urlconf_cache()
+        _del_reverse_site_cache()
+
+        with set_hosts({site.pk: site.host for site in (self.test_site, page.site)}):
+            with self.assertNumQueries(1):
+                # 1. pages with apps
+                self.assertEqual(
+                    a1.get_absolute_url(),
+                    f"http://testserver/blog/{a1.pk}/",
+                )
+            with self.assertNumQueries(0):
+                # 0 (apps are already cached)
+                self.assertEqual(
+                    a1.get_absolute_url(),
+                    f"http://testserver/blog/{a1.pk}/",
+                )
+            with self.assertNumQueries(1):
+                # 1. pages with apps for another site
+                self.assertEqual(
+                    a2.get_absolute_url(),
+                    f"http://testserver2/blog/{a2.pk}/",
+                )
+
     def test_site_model(self):
         """Test various aspects of the Site model"""
         # No problems
@@ -265,6 +332,9 @@ class AppsMiddlewareTest(TestCase):
         # No default site:
         self.test_site.delete()
         self.assertEqual(Site.objects.for_host("anything"), None)
+
+        # Directly use the utility
+        self.assertEqual(site_for_host("anything"), None)
 
     def test_host_re_mismatch(self):
         self.test_site.is_managed_re = False
