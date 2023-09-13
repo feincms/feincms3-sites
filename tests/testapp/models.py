@@ -6,10 +6,10 @@ from feincms3.applications import (
     ApplicationType,
     PageTypeMixin,
     TemplateType,
-    reverse_app,
 )
 from feincms3.mixins import LanguageMixin, MenuMixin, RedirectMixin
 
+from feincms3_sites.middleware import reverse_site_app
 from feincms3_sites.models import AbstractPage, AbstractSite
 
 
@@ -71,6 +71,7 @@ class Article(models.Model):
         max_length=20,
         choices=(("publications", "publications"), ("blog", "blog")),
     )
+    site = models.ForeignKey("feincms3_sites.Site", on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["-pk"]
@@ -79,6 +80,9 @@ class Article(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse_app(
-            (self.category, "articles"), "article-detail", kwargs={"pk": self.pk}
+        return reverse_site_app(
+            (self.category, "articles"),
+            "article-detail",
+            kwargs={"pk": self.pk},
+            site=self.site_id,
         )

@@ -134,7 +134,9 @@ class AppsMiddlewareTest(TestCase):
 
         for i in range(7):
             for category in ("publications", "blog"):
-                Article.objects.create(title=f"{category} {i}", category=category)
+                Article.objects.create(
+                    title=f"{category} {i}", category=category, site=self.test_site
+                )
 
         self.assertContains(self.client.get("/de/blog/all/"), 'class="article"', 7)
         self.assertContains(self.client.get("/de/blog/?page=2"), 'class="article"', 2)
@@ -161,12 +163,14 @@ class AppsMiddlewareTest(TestCase):
                 article = Article.objects.order_by("pk").first()
                 with override("de"):
                     self.assertEqual(
-                        article.get_absolute_url(), "/de/publications/%s/" % article.pk
+                        article.get_absolute_url(),
+                        "http://testserver/de/publications/%s/" % article.pk,
                     )
 
                 with override("en"):
                     self.assertEqual(
-                        article.get_absolute_url(), "/en/publications/%s/" % article.pk
+                        article.get_absolute_url(),
+                        "http://testserver/en/publications/%s/" % article.pk,
                     )
             finally:
                 set_urlconf(None)
@@ -211,7 +215,9 @@ class AppsMiddlewareTest(TestCase):
             page_type="blog",
             site=Site.objects.create(host="testserver2"),
         )
-        a = Article.objects.create(title="article", category="blog")
+        a = Article.objects.create(
+            title="article", category="blog", site=self.test_site
+        )
 
         # No urlconf.
         self.assertRaises(NoReverseMatch, a.get_absolute_url)
@@ -222,13 +228,6 @@ class AppsMiddlewareTest(TestCase):
         # Apps on this site
         with set_current_site(page.site):
             self.assertEqual(apps_urlconf(), "urlconf_01c07a48384868b2300536767c9879e2")
-
-        try:
-            set_urlconf("urlconf_01c07a48384868b2300536767c9879e2")
-            self.assertEqual(a.get_absolute_url(), "/blog/%s/" % a.pk)
-
-        finally:
-            set_urlconf(None)
 
     def test_site_model(self):
         """Test various aspects of the Site model"""
