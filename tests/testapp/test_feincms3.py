@@ -699,6 +699,20 @@ class SiteModelDeclaredTest(TestCase):
             self.assertEqual(get_site_model(), Site)
 
 
+class InvalidSiteModels(TestCase):
+    @override_settings(FEINCMS3_SITES_SITE_MODEL="bla")
+    def test_invalid_site_model(self):
+        with self.assertRaisesRegex(ImproperlyConfigured, "must be of the form"):
+            get_site_model()
+
+    @override_settings(FEINCMS3_SITES_SITE_MODEL="not.exists")
+    def test_uninstalled_site_model(self):
+        with self.assertRaisesRegex(
+            ImproperlyConfigured, "that has not been installed"
+        ):
+            get_site_model()
+
+
 # The following test cases require a separate testapp each, since changing the
 # settings afterwards will result in AttributeError: Manager isn't available;
 # 'feincms3_sites.Site' has been swapped for 'missing.Model'
