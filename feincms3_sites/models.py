@@ -80,6 +80,9 @@ class AbstractSite(models.Model):
                     _("The regular expression does not match the host.")
                 )
 
+    def get_host(self):
+        return self.host
+
 
 class Site(AbstractSite):
     class Meta(AbstractSite.Meta):

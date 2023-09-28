@@ -65,7 +65,7 @@ def build_absolute_uri(url, *, site=None):
     if hasattr(site, "pk"):
         site = site.pk
     if site and (obj := _get_sites().get(site)):
-        return iri_to_uri(urljoin(f"{_protocol()}//{obj.host}", url))
+        return iri_to_uri(urljoin(f"{_protocol()}//{obj.get_host()}", url))
     return url
 
 
@@ -135,7 +135,7 @@ def redirect_to_site_middleware(get_response):
             )
 
         # Host matches, and either no HTTPS enforcement or already HTTPS
-        if request.get_host() == site.host and (
+        if request.get_host() == site.get_host() and (
             not settings.SECURE_SSL_REDIRECT or request.is_secure()
         ):
             return get_response(request)
@@ -146,7 +146,7 @@ def redirect_to_site_middleware(get_response):
         return redirect_class(
             "http{}://{}{}".format(
                 "s" if (settings.SECURE_SSL_REDIRECT or request.is_secure()) else "",
-                site.host,
+                site.get_host(),
                 request.get_full_path(),
             )
         )
