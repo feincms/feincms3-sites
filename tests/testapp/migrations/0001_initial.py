@@ -61,6 +61,15 @@ class Migration(migrations.Migration):
                         verbose_name="default language",
                     ),
                 ),
+                (
+                    "language_codes",
+                    models.CharField(
+                        blank=True,
+                        help_text="A list of comma-separated langauge codes supported by this site.",
+                        max_length=200,
+                        verbose_name="language codes",
+                    ),
+                ),
                 ("title", models.CharField(blank=True, max_length=100)),
             ],
             options={
