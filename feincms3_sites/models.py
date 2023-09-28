@@ -9,6 +9,7 @@ from feincms3 import pages
 from feincms3.utils import ChoicesCharField
 
 from feincms3_sites.middleware import current_site, site_for_host
+from feincms3_sites.utils import import_callable
 
 
 if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no cover
@@ -97,6 +98,8 @@ class AbstractSite(models.Model):
                 )
 
     def get_host(self):
+        if spec := getattr(settings, "FEINCMS3_SITES_SITE_GET_HOST", None):
+            return import_callable(spec)(self)
         return self.host
 
 

@@ -1,6 +1,9 @@
+from functools import cache
+
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.module_loading import import_string
 
 
 def get_site_model():
@@ -25,3 +28,8 @@ def get_site_model():
             "FEINCMS3_SITES_SITE_MODEL refers to model '%s' that has not been installed"
             % model_name
         ) from exc
+
+
+@cache
+def import_callable(spec):
+    return spec if callable(spec) else import_string(spec)
