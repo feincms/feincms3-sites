@@ -27,7 +27,7 @@ from feincms3_sites.utils import get_site_model
 
 
 _current_site = contextvars.ContextVar("current_site", default=None)
-_hosts = contextvars.ContextVar("hosts", default={})
+_sites = contextvars.ContextVar("sites", default={})
 
 
 def site_for_host(host, *, sites=None):
@@ -53,9 +53,9 @@ def _protocol():
     return "https:" if settings.SECURE_SSL_REDIRECT else "http:"
 
 
-def _get_hosts():
-    return _hosts.get() or {
-        site.pk: site.host
+def _get_sites():
+    return _sites.get() or {
+        site.pk: site
         for site in get_site_model()._default_manager.filter(is_active=True)
     }
 
@@ -64,8 +64,8 @@ def build_absolute_uri(url, *, site=None):
     site = site or current_site()
     if hasattr(site, "pk"):
         site = site.pk
-    if site and (host := _get_hosts().get(site)):
-        return iri_to_uri(urljoin(f"{_protocol()}//{host}", url))
+    if site and (obj := _get_sites().get(site)):
+        return iri_to_uri(urljoin(f"{_protocol()}//{obj.host}", url))
     return url
 
 
@@ -106,10 +106,10 @@ def current_site():
 
 
 @contextmanager
-def set_hosts(hosts):
-    token = _hosts.set(hosts)
+def set_sites(sites):
+    token = _sites.set(sites)
     yield
-    _hosts.reset(token)
+    _sites.reset(token)
 
 
 def site_middleware(get_response):
@@ -118,8 +118,8 @@ def site_middleware(get_response):
     def middleware(request):
         sites = site_model._default_manager.filter(is_active=True)
         if site := site_for_host(request.get_host(), sites=sites):
-            hosts = {site.pk: site.host for site in sites}
-            with set_hosts(hosts), set_current_site(site):
+            sites = {site.pk: site for site in sites}
+            with set_sites(sites), set_current_site(site):
                 return get_response(request)
         raise Http404("No configuration found for %r" % request.get_host())
 

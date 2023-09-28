@@ -12,7 +12,7 @@ from feincms3_sites.middleware import (
     _del_reverse_site_cache,
     build_absolute_uri,
     set_current_site,
-    set_hosts,
+    set_sites,
     site_for_host,
 )
 from feincms3_sites.models import Site
@@ -276,7 +276,7 @@ class AppsMiddlewareTest(TestCase):
         _del_apps_urlconf_cache()
         _del_reverse_site_cache()
 
-        with set_hosts({site.pk: site.host for site in (self.test_site, page.site)}):
+        with set_sites({site.pk: site for site in (self.test_site, page.site)}):
             with self.assertNumQueries(1):
                 # 1. pages with apps
                 self.assertEqual(
@@ -402,7 +402,7 @@ class AppsMiddlewareTest(TestCase):
                 build_absolute_uri("/test/"),
                 "http://testserver/test/",
             )
-        with set_hosts({3: "blub.example.com"}):
+        with set_sites({3: Site(host="blub.example.com")}):
             self.assertEqual(
                 build_absolute_uri("/test/", site=3),
                 "http://blub.example.com/test/",
