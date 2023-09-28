@@ -27,6 +27,15 @@ class SiteQuerySet(models.QuerySet):
         return site_for_host(host, sites=self)
 
 
+def validate_language_codes(value):
+    if value:
+        known = {code for code, _name in settings.LANGUAGES}
+        if unknown := {code for code in value.split(",") if code not in known}:
+            raise ValidationError(
+                _("Unknown language codes: {}").format(", ".join(sorted(unknown)))
+            )
+
+
 class AbstractSite(models.Model):
     is_active = models.BooleanField(_("is active"), default=True)
     is_default = models.BooleanField(_("is default"), default=False)
@@ -46,6 +55,13 @@ class AbstractSite(models.Model):
             "The default language will be overridden by more specific settings"
             " such as the language of individual pages."
         ),
+    )
+    language_codes = models.CharField(
+        _("language codes"),
+        max_length=200,
+        blank=True,
+        help_text=_("A list of comma-separated langauge codes supported by this site."),
+        validators=[validate_language_codes],
     )
 
     objects = SiteQuerySet.as_manager()

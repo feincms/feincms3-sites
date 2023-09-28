@@ -45,8 +45,13 @@ class SiteAdmin(admin.ModelAdmin):
         (
             capfirst(_("advanced")),
             {
-                "fields": ("is_managed_re", "host_re", "default_language"),
-                "classes": ("collapse",),
+                "fields": (
+                    "is_managed_re",
+                    "host_re",
+                    "default_language",
+                    "language_codes",
+                ),
+                "classes": ["collapse"],
             },
         ),
     ]
@@ -58,6 +63,7 @@ class SiteAdmin(admin.ModelAdmin):
         "is_managed_re",
         "host_re",
         "default_language",
+        "language_codes",
     ]
     list_editable = ["is_active", "is_default"]
     ordering = ["-is_default", "host"]

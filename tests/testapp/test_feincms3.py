@@ -15,7 +15,7 @@ from feincms3_sites.middleware import (
     set_sites,
     site_for_host,
 )
-from feincms3_sites.models import Site
+from feincms3_sites.models import Site, validate_language_codes
 from feincms3_sites.utils import get_site_model
 from testapp.models import Article, CustomSite, Page
 
@@ -643,6 +643,14 @@ class DefaultLanguageTest(TestCase):
             self.client.get("/i18n/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
             "/en/i18n/",
         )
+
+
+class SiteTest(TestCase):
+    def test_language_codes_validation(self):
+        validate_language_codes("")
+        validate_language_codes("en,de")
+        with self.assertRaisesRegex(ValidationError, "blub"):
+            validate_language_codes("blub,de")
 
 
 class SiteAdminTest(TestCase):
