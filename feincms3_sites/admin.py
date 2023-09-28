@@ -30,7 +30,7 @@ class DefaultLanguageListFilter(admin.SimpleListFilter):
 class SiteForm(forms.ModelForm):
     default_language = Site._meta.get_field("default_language").formfield(
         choices=BLANK_CHOICE_DASH + list(settings.LANGUAGES),
-        widget=widgets.AdminRadioSelect,
+        widget=widgets.AdminRadioSelect(attrs={"class": "radiolist"}),
     )
 
     class Meta:
