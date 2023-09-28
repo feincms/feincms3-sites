@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import widgets
+from django.db.models import BLANK_CHOICE_DASH
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
@@ -10,7 +11,7 @@ from feincms3_sites.models import Site
 
 class DefaultLanguageListFilter(admin.SimpleListFilter):
     """
-    Simple list filter for the default_language property.
+    Simple list filter for the default_language attribute.
     """
 
     title = capfirst(_("default language"))
@@ -28,7 +29,7 @@ class DefaultLanguageListFilter(admin.SimpleListFilter):
 
 class SiteForm(forms.ModelForm):
     default_language = Site._meta.get_field("default_language").formfield(
-        choices=[("", "----------")] + list(settings.LANGUAGES),
+        choices=BLANK_CHOICE_DASH + list(settings.LANGUAGES),
         widget=widgets.AdminRadioSelect,
     )
 
