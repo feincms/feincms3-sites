@@ -13,6 +13,8 @@ from feincms3_sites.middleware import current_site, site_for_host
 from feincms3_sites.utils import import_callable
 
 
+_language_names = dict(global_settings.LANGUAGES)
+
 if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no cover
     settings.FEINCMS3_SITES_SITE_MODEL = "feincms3_sites.Site"
 if not hasattr(settings, "FEINCMS3_SITES_SITE_GET_HOST"):  # pragma: no cover
@@ -109,6 +111,12 @@ class AbstractSite(models.Model):
 
     def get_host(self):
         return self.host
+
+    def languages(self):
+        return [
+            (code, _language_names.get(code, ""))
+            for code in self.language_codes.split(",")
+        ]
 
 
 def _prepare_site_model(sender, **kwargs):

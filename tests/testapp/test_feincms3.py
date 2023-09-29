@@ -663,6 +663,12 @@ class SiteTest(TestCase):
         with self.assertRaisesRegex(ValidationError, "blub"):
             validate_language_codes("blub,de")
 
+        site = Site(language_codes="de")
+        self.assertEqual(
+            site.languages(),
+            [("de", "German")],
+        )
+
 
 class SiteAdminTest(TestCase):
     def setUp(self):
