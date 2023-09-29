@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+0.19 (2023-09-29)
+~~~~~~~~~~~~~~~~~
+
 - Started running tests at least once every month.
 - Added an optional language codes field which allows defining the list of
   languages per site.
@@ -18,7 +21,9 @@ Next version
   callable or the Python module path to a callable which accepts the site
   instance and should return a hostname. It's especially useful for local
   development since you can easily change the host values to work in your local
-  environment.
+  environment. For example, if you're using feincms3-sites with subdomains you
+  could set ``FEINCMS3_SITES_SITE_GET_HOST = lambda site:
+  site.host.replace("example.com", "localhost:8000")``.
 
 
 0.18 (2023-09-08)
