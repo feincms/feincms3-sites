@@ -669,6 +669,12 @@ class SiteTest(TestCase):
             [("de", "German")],
         )
 
+        site = Site(language_codes="")
+        self.assertEqual(
+            site.languages(),
+            [("en", "English"), ("de", "German")],
+        )
+
 
 class SiteAdminTest(TestCase):
     def setUp(self):

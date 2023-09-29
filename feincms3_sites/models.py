@@ -113,10 +113,14 @@ class AbstractSite(models.Model):
         return self.host
 
     def languages(self):
-        return [
-            (code, _language_names.get(code, ""))
-            for code in self.language_codes.split(",")
-        ]
+        return (
+            [
+                (code, _language_names.get(code, ""))
+                for code in self.language_codes.split(",")
+            ]
+            if self.language_codes
+            else settings.LANGUAGES
+        )
 
 
 def _prepare_site_model(sender, **kwargs):
