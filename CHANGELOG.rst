@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Made ``Site.languages`` return all languages instead of nonsense when
+  ``language_codes`` is empty.
+
 0.19 (2023-09-29)
 ~~~~~~~~~~~~~~~~~
 
