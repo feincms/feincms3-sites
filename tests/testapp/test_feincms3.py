@@ -15,7 +15,12 @@ from feincms3_sites.middleware import (
     set_sites,
     site_for_host,
 )
-from feincms3_sites.models import AbstractPage, Site, validate_language_codes
+from feincms3_sites.models import (
+    AbstractPage,
+    AbstractSite,
+    Site,
+    validate_language_codes,
+)
 from feincms3_sites.utils import get_site_model, import_callable
 from testapp.models import Article, CustomSite, Page
 
@@ -735,10 +740,11 @@ class SiteModelTest(TestCase):
         ):
             get_site_model()
 
-    @override_settings(FEINCMS3_SITES_SITE_MODEL="testapp.CustomSite")
+    @override_settings(
+        FEINCMS3_SITES_SITE_MODEL="testapp.CustomSite",
+    )
     def test_get_site_model(self):
         self.assertEqual(get_site_model(), CustomSite)
-        # self.assertEqual(CustomSite().get_host(), "return value")
 
     @override_settings(FEINCMS3_SITES_SITE_MODEL="missing.Model")
     def test_swapped_out_model(self):
@@ -762,3 +768,11 @@ class SiteModelTest(TestCase):
         errors = Page.check()
         error_ids = [error.id for error in errors]
         self.assertIn("feincms3_sites.E001", error_ids)
+
+    @isolate_apps("testapp")
+    @override_settings(FEINCMS3_SITES_SITE_GET_HOST=lambda site: "return value")
+    def test_custom_get_host(self):
+        class MySite(AbstractSite):
+            pass
+
+        self.assertEqual(MySite().get_host(), "return value")
