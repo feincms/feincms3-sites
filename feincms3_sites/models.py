@@ -27,6 +27,9 @@ class SiteQuerySet(models.QuerySet):
     The default site's host regex is tested first.
     """
 
+    def active(self):
+        return self.filter(is_active=True)
+
     def for_host(self, host):
         return site_for_host(host, sites=self)
 

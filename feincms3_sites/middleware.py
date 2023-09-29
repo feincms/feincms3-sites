@@ -39,7 +39,7 @@ def site_for_host(host, *, sites=None):
     """
 
     if sites is None:
-        sites = get_site_model()._default_manager.filter(is_active=True)
+        sites = get_site_model()._default_manager.active()
     default = None
     for site in sorted(sites, key=lambda site: (-site.is_default, site.pk)):
         if re.search(site.host_re, host):
@@ -56,7 +56,7 @@ def _protocol():
 def _get_sites():
     return _sites.get() or {
         site.pk: site
-        for site in get_site_model()._default_manager.filter(is_active=True)
+        for site in get_site_model()._default_manager.active()
     }
 
 
@@ -116,7 +116,7 @@ def site_middleware(get_response):
     site_model = get_site_model()
 
     def middleware(request):
-        sites = site_model._default_manager.filter(is_active=True)
+        sites = site_model._default_manager.active()
         if site := site_for_host(request.get_host(), sites=sites):
             sites = {site.pk: site for site in sites}
             with set_sites(sites), set_current_site(site):
