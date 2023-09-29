@@ -47,7 +47,7 @@ TEMPLATES = [
     }
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE_BASE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,6 +56,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+MIDDLEWARE = [
+    *MIDDLEWARE_BASE,
+    "testapp.middleware.page_if_404_middleware",
 ]
 
 USE_CUSTOM_SITE = bool(os.environ.get("USE_CUSTOM_SITE", False))

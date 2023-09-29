@@ -37,10 +37,11 @@ def merge_dicts(*dicts):
 
 
 @override_settings(
-    MIDDLEWARE=settings.MIDDLEWARE
-    + [
+    MIDDLEWARE=[
+        *settings.MIDDLEWARE,
         "feincms3_sites.middleware.site_middleware",
         "feincms3.applications.apps_middleware",
+        "testapp.middleware.page_if_404_middleware",
     ]
 )
 class AppsMiddlewareTest(TestCase):
@@ -415,7 +416,11 @@ class AppsMiddlewareTest(TestCase):
 
 
 @override_settings(
-    MIDDLEWARE=settings.MIDDLEWARE + ["feincms3_sites.middleware.site_middleware"]
+    MIDDLEWARE=[
+        *settings.MIDDLEWARE_BASE,
+        "feincms3_sites.middleware.site_middleware",
+        "testapp.middleware.page_if_404_middleware",
+    ]
 )
 class SiteMiddlewareTest(TestCase):
     def test_404(self):
@@ -456,8 +461,8 @@ class CanonicalDomainMiddlewareTest(TestCase):
     MIDDLEWARE=[
         "feincms3_sites.middleware.site_middleware",
         "feincms3_sites.middleware.redirect_to_site_middleware",
+        *settings.MIDDLEWARE,
     ]
-    + settings.MIDDLEWARE
 )
 class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
     def test_request(self):
@@ -467,8 +472,10 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
 
 
 @override_settings(
-    MIDDLEWARE=["feincms3_sites.middleware.redirect_to_site_middleware"]
-    + settings.MIDDLEWARE
+    MIDDLEWARE=[
+        "feincms3_sites.middleware.redirect_to_site_middleware",
+        *settings.MIDDLEWARE,
+    ]
 )
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
@@ -480,8 +487,8 @@ class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     MIDDLEWARE=[
         "feincms3_sites.middleware.site_middleware",
         "feincms3_sites.middleware.redirect_to_site_middleware",
+        *settings.MIDDLEWARE,
     ]
-    + settings.MIDDLEWARE
 )
 class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
     def test_http_requests(self):
@@ -579,11 +586,15 @@ class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        "testapp.middleware.page_if_404_middleware",
     ]
 )
 class DefaultLanguageTest(TestCase):
     def test_language(self):
         site = Site.objects.create(host="example.com", default_language="de")
+        Page.objects.create(title="en", slug="en", path="/en/", site=site)
+        Page.objects.create(title="de", slug="de", path="/de/", site=site)
+
         self.assertRedirects(
             self.client.get("/", HTTP_HOST=site.host),
             "/de/",
