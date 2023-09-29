@@ -4,6 +4,7 @@ from django.conf import global_settings, settings
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import gettext_lazy as _
 from feincms3 import pages
 from feincms3.utils import ChoicesCharField
@@ -14,6 +15,8 @@ from feincms3_sites.utils import import_callable
 
 if not hasattr(settings, "FEINCMS3_SITES_SITE_MODEL"):  # pragma: no cover
     settings.FEINCMS3_SITES_SITE_MODEL = "feincms3_sites.Site"
+if not hasattr(settings, "FEINCMS3_SITES_SITE_GET_HOST"):  # pragma: no cover
+    settings.FEINCMS3_SITES_SITE_GET_HOST = None
 
 
 class SiteQuerySet(models.QuerySet):
@@ -98,9 +101,17 @@ class AbstractSite(models.Model):
                 )
 
     def get_host(self):
-        if spec := getattr(settings, "FEINCMS3_SITES_SITE_GET_HOST", None):
-            return import_callable(spec)(self)
         return self.host
+
+
+def _prepare_site_model(sender, **kwargs):
+    if issubclass(sender, AbstractSite) and (
+        spec := settings.FEINCMS3_SITES_SITE_GET_HOST
+    ):
+        AbstractSite.get_host = import_callable(spec)
+
+
+signals.class_prepared.connect(_prepare_site_model)
 
 
 class Site(AbstractSite):
