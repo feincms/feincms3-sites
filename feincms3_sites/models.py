@@ -87,6 +87,10 @@ class AbstractSite(models.Model):
 
     save.alters_data = True
 
+    def get_absolute_url(self):
+        protocol = "https:" if settings.SECURE_SSL_REDIRECT else "http:"
+        return f"{protocol}//{self.get_host()}"
+
     def clean(self):
         if self.is_managed_re:
             self.host_re = r"^%s$" % re.escape(self.host)

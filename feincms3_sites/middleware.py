@@ -49,14 +49,9 @@ def site_for_host(host, *, sites=None):
     return default
 
 
-def _protocol():
-    return "https:" if settings.SECURE_SSL_REDIRECT else "http:"
-
-
 def _get_sites():
     return _sites.get() or {
-        site.pk: site
-        for site in get_site_model()._default_manager.active()
+        site.pk: site for site in get_site_model()._default_manager.active()
     }
 
 
@@ -65,7 +60,7 @@ def build_absolute_uri(url, *, site=None):
     if hasattr(site, "pk"):
         site = site.pk
     if site and (obj := _get_sites().get(site)):
-        return iri_to_uri(urljoin(f"{_protocol()}//{obj.get_host()}", url))
+        return iri_to_uri(urljoin(obj.get_absolute_url(), url))
     return url
 
 
