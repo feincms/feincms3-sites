@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.test import Client, TestCase
-from django.test.utils import override_settings
+from django.test.utils import isolate_apps, override_settings
 from django.urls import set_urlconf
 from django.utils.translation import deactivate_all, override
 from feincms3.applications import NoReverseMatch, _del_apps_urlconf_cache, apps_urlconf
@@ -15,7 +15,7 @@ from feincms3_sites.middleware import (
     set_sites,
     site_for_host,
 )
-from feincms3_sites.models import Site, validate_language_codes
+from feincms3_sites.models import AbstractPage, Site, validate_language_codes
 from feincms3_sites.utils import get_site_model, import_callable
 from testapp.models import Article, CustomSite, Page
 
@@ -722,26 +722,7 @@ class SiteAdminTest(TestCase):
         )
 
 
-class SiteModelDeclaredTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
-        deactivate_all()
-
-        if settings.USE_CUSTOM_SITE:
-            self.test_site = CustomSite.objects.create(
-                host="testserver", is_default=True, title="Test Site"
-            )
-        else:
-            self.test_site = Site.objects.create(host="testserver", is_default=True)
-
-    def test_get_site_model(self):
-        if settings.USE_CUSTOM_SITE:
-            self.assertEqual(get_site_model(), CustomSite)
-        else:
-            self.assertEqual(get_site_model(), Site)
-
-
-class InvalidSiteModels(TestCase):
+class SiteModelTest(TestCase):
     @override_settings(FEINCMS3_SITES_SITE_MODEL="bla")
     def test_invalid_site_model(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "must be of the form"):
@@ -754,42 +735,30 @@ class InvalidSiteModels(TestCase):
         ):
             get_site_model()
 
+    @override_settings(FEINCMS3_SITES_SITE_MODEL="testapp.CustomSite")
+    def test_get_site_model(self):
+        self.assertEqual(get_site_model(), CustomSite)
+        # self.assertEqual(CustomSite().get_host(), "return value")
 
-class UtilsTest(TestCase):
+    @override_settings(FEINCMS3_SITES_SITE_MODEL="missing.Model")
+    def test_swapped_out_model(self):
+        with self.assertRaisesRegex(AttributeError, "Manager isn't available"):
+            Site.objects.create(host="testserver", is_default=True)
+
     def test_import_callable(self):
         from math import ceil
 
         self.assertEqual(import_callable(ceil), ceil)
         self.assertEqual(import_callable("math.ceil"), ceil)
 
+    @isolate_apps("testapp")
+    def test_page_with_missing_unique_together(self):
+        """Page subclass without unique_together fails validation"""
 
-# The following test cases require a separate testapp each, since changing the
-# settings afterwards will result in AttributeError: Manager isn't available;
-# 'feincms3_sites.Site' has been swapped for 'missing.Model'
-#
-# @override_settings(
-#     FEINCMS3_SITES_SITE_MODEL=''
-# )
-# class SiteModelUndeclaredTest(TestCase):
-#     def setUp(self):
-#         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
-#         deactivate_all()
-#
-#         self.test_site = Site.objects.create(host="testserver", is_default=True)
-#
-#     def test_get_site_model(self):
-#         self.assertRaises(ImproperlyConfigured, get_site_model)
-#
-#
-# @override_settings(
-#     FEINCMS3_SITES_SITE_MODEL='missing.Model'
-# )
-# class SiteModelUndeclaredTest(TestCase):
-#     def setUp(self):
-#         self.user = User.objects.create_superuser("admin", "admin@test.ch", "blabla")
-#         deactivate_all()
-#
-#         self.test_site = Site.objects.create(host="testserver", is_default=True)
-#
-#     def test_get_site_model(self):
-#         self.assertRaises(ImproperlyConfigured, get_site_model)
+        class Page(AbstractPage):
+            class Meta:
+                unique_together = []
+
+        errors = Page.check()
+        error_ids = [error.id for error in errors]
+        self.assertIn("feincms3_sites.E001", error_ids)

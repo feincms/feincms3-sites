@@ -1,4 +1,5 @@
 from content_editor.models import Region, create_plugin_base
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from feincms3 import plugins
@@ -71,7 +72,9 @@ class Article(models.Model):
         max_length=20,
         choices=(("publications", "publications"), ("blog", "blog")),
     )
-    site = models.ForeignKey("feincms3_sites.Site", on_delete=models.CASCADE)
+    site = models.ForeignKey(
+        settings.FEINCMS3_SITES_SITE_MODEL, on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-pk"]

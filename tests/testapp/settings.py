@@ -61,7 +61,3 @@ MIDDLEWARE = [
     *MIDDLEWARE_BASE,
     "testapp.middleware.page_if_404_middleware",
 ]
-
-USE_CUSTOM_SITE = bool(os.environ.get("USE_CUSTOM_SITE", False))
-if USE_CUSTOM_SITE:
-    FEINCMS3_SITES_SITE_MODEL = "testapp.CustomSite"
