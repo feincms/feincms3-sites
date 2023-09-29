@@ -1,6 +1,7 @@
 import re
 
 from django.conf import global_settings, settings
+from django.core.checks import Error
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -219,6 +220,23 @@ class AbstractPage(pages.AbstractPage):
                 verbose_name=_("site"),
                 related_name="+",
             ).contribute_to_class(sender, "site")
+
+    @classmethod
+    def check(cls, **kwargs):
+        errors = super().check(**kwargs)
+        errors.extend(cls._check_feincms3_sites_page(**kwargs))
+        return errors
+
+    @classmethod
+    def _check_feincms3_sites_page(cls, **kwargs):
+        unique_together = [set(fields) for fields in cls._meta.unique_together]
+        if {"site", "path"} not in unique_together:
+            yield Error(
+                "Models using the feincms3-sites page must ensure that paths exist only once per site.",
+                obj=cls,
+                id="feincms3_sites.E001",
+                hint='Add ("site", "path") to unique_together.',
+            )
 
 
 models.signals.class_prepared.connect(AbstractPage.add_site_field)
