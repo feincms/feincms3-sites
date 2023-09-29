@@ -16,7 +16,7 @@ from feincms3_sites.middleware import (
     site_for_host,
 )
 from feincms3_sites.models import Site, validate_language_codes
-from feincms3_sites.utils import get_site_model
+from feincms3_sites.utils import get_site_model, import_callable
 from testapp.models import Article, CustomSite, Page
 
 
@@ -687,6 +687,17 @@ class SiteAdminTest(TestCase):
             1,
         )
 
+        response = self.client.get("/admin/feincms3_sites/site/?default_language=en")
+        # print(response, response.content.decode("utf-8"))
+        self.assertContains(
+            response,
+            '<li class="selected"><a href="?default_language=en" title="English">English</a></li>'
+            if django.VERSION < (4, 1)
+            else '<li class="selected"><a href="?default_language=en">English</a></li>',
+            1,
+            html=True,
+        )
+
 
 class SiteModelDeclaredTest(TestCase):
     def setUp(self):
@@ -719,6 +730,14 @@ class InvalidSiteModels(TestCase):
             ImproperlyConfigured, "that has not been installed"
         ):
             get_site_model()
+
+
+class UtilsTest(TestCase):
+    def test_import_callable(self):
+        from math import ceil
+
+        self.assertEqual(import_callable(ceil), ceil)
+        self.assertEqual(import_callable("math.ceil"), ceil)
 
 
 # The following test cases require a separate testapp each, since changing the

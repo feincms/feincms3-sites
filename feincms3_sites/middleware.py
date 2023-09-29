@@ -78,7 +78,7 @@ request_finished.connect(_del_reverse_site_cache)
 
 
 def reverse_site_app(*args, site, **kwargs):
-    if not hasattr(_reverse_site_cache, "cache"):
+    if not hasattr(_reverse_site_cache, "cache"):  # pragma: no cover
         _reverse_site_cache.cache = {}
     key = site.pk if hasattr(site, "pk") else site
 
