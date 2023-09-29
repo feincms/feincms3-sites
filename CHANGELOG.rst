@@ -5,9 +5,20 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Started running tests at least once every month.
+- Added an optional language codes field which allows defining the list of
+  languages per site.
 - Added an undocumented ``reverse_site_app`` wrapper around ``reverse_app`` and
   ``build_absolute_uri`` which allows reversing URLs from the current and other
   sites, without caring if a site is active currently.
+- Added a default ``get_absolute_url`` method to sites.
+- Added an overrideable ``get_host`` method to sites. The method can be
+  overridden either in a swappable model or by using the
+  ``FEINCMS3_SITES_SITE_GET_HOST`` setting. The setting should be either a
+  callable or the Python module path to a callable which accepts the site
+  instance and should return a hostname. It's especially useful for local
+  development since you can easily change the host values to work in your local
+  environment.
 
 
 0.18 (2023-09-08)
