@@ -342,6 +342,17 @@ class AppsMiddlewareTest(TestCase):
         # Directly use the utility
         self.assertEqual(site_for_host("anything"), None)
 
+    def test_several_default_hosts(self):
+        s1 = Site.objects.create(host="testserver1", is_default=True)
+        s2 = Site.objects.create(host="testserver2", is_default=True)
+
+        self.assertEqual(Site.objects.for_host("testserver1"), s1)
+        self.assertEqual(Site.objects.for_host("testserver2"), s2)
+
+        # Last default site (highest PK) wins. That's not an important design
+        # decision, this test just verifies that the behavior doesn't change.
+        self.assertEqual(Site.objects.for_host("testserver3"), s2)
+
     def test_host_re_mismatch(self):
         self.test_site.is_managed_re = False
         self.test_site.host = "testserver2"
