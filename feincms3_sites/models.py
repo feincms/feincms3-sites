@@ -184,8 +184,8 @@ class AbstractPage(pages.AbstractPage):
         verbose_name = _("page")
         verbose_name_plural = _("pages")
 
-    def _path_clash_candidates(self):
-        return super()._path_clash_candidates().filter(site=self.site_id)
+    def _clash_candidates(self):
+        return super()._clash_candidates().filter(site=self.site_id)
 
     def clean_fields(self, exclude=None):
         """

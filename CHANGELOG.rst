@@ -9,6 +9,7 @@ Next version
   ``language_codes`` is empty.
 - Added a system check which ensures that a unique index for ``(site, path)``
   exists on pages.
+- Fixed the applications clash check.
 
 
 0.19 (2023-09-29)
