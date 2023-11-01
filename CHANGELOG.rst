@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+0.20 (2023-11-01)
+~~~~~~~~~~~~~~~~~
+
 - Made ``Site.languages`` return all languages instead of nonsense when
   ``language_codes`` is empty.
 - Added a system check which ensures that a unique index for ``(site, path)``
