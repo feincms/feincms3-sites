@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Handle the case when a page's site and its parent's site do not match.
+
+
 0.20 (2023-11-01)
 ~~~~~~~~~~~~~~~~~
 

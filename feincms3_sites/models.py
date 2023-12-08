@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import gettext_lazy as _
 from feincms3 import pages
-from feincms3.utils import ChoicesCharField
+from feincms3.utils import ChoicesCharField, validation_error
 
 from feincms3_sites.middleware import current_site, site_for_host
 from feincms3_sites.utils import import_callable
@@ -195,6 +195,12 @@ class AbstractPage(pages.AbstractPage):
         exclude = [] if exclude is None else exclude
         super().clean_fields(exclude)
 
+        if self.site_id and self.parent_id and self.site_id != self.parent.site_id:
+            raise validation_error(
+                _("The site of this page and the site of its parent must be the same."),
+                field="parent",
+                exclude=exclude,
+            )
         if not self.site_id and not self.parent_id:
             # Using validation_error() does not work as it should, because
             # 'site' is always part of exclude, because the model field is

@@ -86,6 +86,13 @@ class AppsMiddlewareTest(TestCase):
 
         self.assertEqual(other_site_page.path, sub.path)
 
+        sub.site = Site.objects.create(host="testserver4")
+        with self.assertRaisesRegex(
+            ValidationError,
+            r"The site of this page and the site of its parent must be the same.",
+        ):
+            sub.full_clean()
+
     def test_root_without_site(self):
         """Create a root page without selecting a site instance should show
         validation errors"""
