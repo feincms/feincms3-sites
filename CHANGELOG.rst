@@ -6,6 +6,7 @@ Next version
 ~~~~~~~~~~~~
 
 - Handle the case when a page's site and its parent's site do not match.
+- Added Python 3.12, Django 5.0.
 
 
 0.20 (2023-11-01)
