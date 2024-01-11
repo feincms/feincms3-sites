@@ -7,6 +7,9 @@ Next version
 
 - Handle the case when a page's site and its parent's site do not match.
 - Added Python 3.12, Django 5.0.
+- Changed the ``DefaultLanguageListFilter`` to use the model admin's default
+  empty value display, and allowed filtering for sites where a default value
+  isn't set.
 
 
 0.20 (2023-11-01)

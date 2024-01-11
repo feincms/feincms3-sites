@@ -713,9 +713,9 @@ class SiteAdminTest(TestCase):
         self.assertContains(response, "By Default language", 1)
         self.assertContains(
             response,
-            '<a href="?default_language=" title="No language">No language</a>'
+            '<a href="?default_language=" title="-">-</a>'
             if django.VERSION < (4, 1)
-            else '<a href="?default_language=">No language</a>',
+            else '<a href="?default_language=">-</a>',
             1,
         )
         self.assertContains(

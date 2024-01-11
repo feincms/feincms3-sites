@@ -18,11 +18,11 @@ class DefaultLanguageListFilter(admin.SimpleListFilter):
     parameter_name = "default_language"
 
     def lookups(self, request, model_admin):
-        return [("", capfirst(_("no language")))] + list(settings.LANGUAGES)
+        return [("", model_admin.get_empty_value_display())] + list(settings.LANGUAGES)
 
     def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(default_language=self.value())
+        if (value := self.value()) is not None:
+            return queryset.filter(default_language=value)
         else:
             return queryset.all()
 
