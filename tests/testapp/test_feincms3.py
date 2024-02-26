@@ -490,7 +490,7 @@ class CanonicalDomainMiddlewareTest(TestCase):
 class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
     def test_request(self):
         self.assertContains(
-            self.client.get("/de/", HTTP_HOST="example.com"), "home - testapp"
+            self.client.get("/de/", headers={"host": "example.com"}), "home - testapp"
         )
 
 
@@ -503,7 +503,7 @@ class MiddlewareNotUsedTestCase(CanonicalDomainMiddlewareTest):
 class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Current site unknown."):
-            self.client.get("/de/", HTTP_HOST="example.com")
+            self.client.get("/de/", headers={"host": "example.com"})
 
 
 @override_settings(
@@ -515,21 +515,21 @@ class ImproperlyConfiguredTest(CanonicalDomainMiddlewareTest):
 )
 class CanonicalDomainTestCase(CanonicalDomainMiddlewareTest):
     def test_http_requests(self):
-        response = self.client.get("/", HTTP_HOST="example.org")
+        response = self.client.get("/", headers={"host": "example.org"})
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "http://example.com/")
 
         self.assertContains(
-            self.client.get("/de/", HTTP_HOST="example.com"), "home - testapp"
+            self.client.get("/de/", headers={"host": "example.com"}), "home - testapp"
         )
 
     def test_https_requests(self):
-        response = self.client.get("/", HTTP_HOST="example.org", secure=True)
+        response = self.client.get("/", headers={"host": "example.org"}, secure=True)
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.com/")
 
         self.assertContains(
-            self.client.get("/de/", HTTP_HOST="example.com", secure=True),
+            self.client.get("/de/", headers={"host": "example.com"}, secure=True),
             "home - testapp",
         )
 
@@ -548,31 +548,31 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.com/")
 
-        response = self.client.get("/", HTTP_HOST="example.org")
+        response = self.client.get("/", headers={"host": "example.org"})
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.com/")
 
     def test_https_redirects(self):
-        response = self.client.get("/", HTTP_HOST="example.org", secure=True)
+        response = self.client.get("/", headers={"host": "example.org"}, secure=True)
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.com/")
 
     def test_match(self):
         self.assertContains(
-            self.client.get("/de/", HTTP_HOST="example.com", secure=True),
+            self.client.get("/de/", headers={"host": "example.com"}, secure=True),
             "home - testapp",
         )
 
     def test_other_site(self):
         """SSL redirect happens, but stays on secondary domain"""
         Site.objects.create(host="example.org")
-        response = self.client.get("/", HTTP_HOST="example.org")
+        response = self.client.get("/", headers={"host": "example.org"})
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "https://example.org/")
 
     @override_settings(DEBUG=True)
     def test_debug(self):
-        response = self.client.get("/", HTTP_HOST="example.org", secure=True)
+        response = self.client.get("/", headers={"host": "example.org"}, secure=True)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], "https://example.com/")
 
@@ -594,7 +594,7 @@ class CanonicalDomainSecureTestCase(CanonicalDomainMiddlewareTest):
 class ImproperlyConfiguredDLTest(CanonicalDomainMiddlewareTest):
     def test_request(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Current site unknown."):
-            self.client.get("/de/", HTTP_HOST="example.com")
+            self.client.get("/de/", headers={"host": "example.com"})
 
 
 @override_settings(
@@ -619,7 +619,7 @@ class DefaultLanguageTest(TestCase):
         Page.objects.create(title="de", slug="de", path="/de/", site=site)
 
         self.assertRedirects(
-            self.client.get("/", HTTP_HOST=site.host),
+            self.client.get("/", headers={"host": site.host}),
             "/de/",
             fetch_redirect_response=False,
         )
@@ -628,7 +628,7 @@ class DefaultLanguageTest(TestCase):
         site.save()
 
         self.assertRedirects(
-            self.client.get("/", HTTP_HOST=site.host),
+            self.client.get("/", headers={"host": site.host}),
             "/en/",
             fetch_redirect_response=False,
         )
@@ -637,19 +637,21 @@ class DefaultLanguageTest(TestCase):
         site.save()
 
         self.assertRedirects(
-            self.client.get("/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
+            self.client.get("/", headers={"host": site.host, "accept-language": "de"}),
             "/de/",
             fetch_redirect_response=False,
         )
 
         self.assertRedirects(
-            self.client.get("/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="fr, en"),
+            self.client.get(
+                "/", headers={"host": site.host, "accept-language": "fr, en"}
+            ),
             "/en/",
             fetch_redirect_response=False,
         )
 
         self.assertRedirects(
-            self.client.get("/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="fr"),
+            self.client.get("/", headers={"host": site.host, "accept-language": "fr"}),
             "/en/",
             fetch_redirect_response=False,
         )
@@ -661,20 +663,28 @@ class DefaultLanguageTest(TestCase):
         site = Site.objects.create(host="example.com")
 
         self.assertRedirects(
-            self.client.get("/i18n/", HTTP_HOST=site.host), "/en/i18n/"
+            self.client.get("/i18n/", headers={"host": site.host}), "/en/i18n/"
         )
 
-        self.assertContains(self.client.get("/en/i18n/", HTTP_HOST=site.host), "en")
-        self.assertContains(self.client.get("/de/i18n/", HTTP_HOST=site.host), "de")
+        self.assertContains(
+            self.client.get("/en/i18n/", headers={"host": site.host}), "en"
+        )
+        self.assertContains(
+            self.client.get("/de/i18n/", headers={"host": site.host}), "de"
+        )
 
         self.assertRedirects(
-            self.client.get("/i18n/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
+            self.client.get(
+                "/i18n/", headers={"host": site.host, "accept-language": "de"}
+            ),
             "/de/i18n/",
         )
         site.default_language = "en"
         site.save()
         self.assertRedirects(
-            self.client.get("/i18n/", HTTP_HOST=site.host, HTTP_ACCEPT_LANGUAGE="de"),
+            self.client.get(
+                "/i18n/", headers={"host": site.host, "accept-language": "de"}
+            ),
             "/en/i18n/",
         )
 

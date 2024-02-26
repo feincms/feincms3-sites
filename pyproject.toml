@@ -33,7 +33,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "Django>=3.2",
+  "Django>=4.2",
   "feincms3>=4.5",
 ]
 [project.optional-dependencies]
@@ -48,6 +48,11 @@ Homepage = "https://github.com/matthiask/feincms3-sites/"
 path = "feincms3_sites/__init__.py"
 
 [tool.ruff]
+fix = true
+show-fixes = true
+target-version = "py39"
+
+[tool.ruff.lint]
 extend-select = [
   # pyflakes, pycodestyle
   "F", "E", "W",
@@ -90,18 +95,15 @@ extend-ignore = [
   # No line length errors
   "E501",
 ]
-fix = true
-show-fixes = true
-target-version = "py39"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 combine-as-imports = true
 lines-after-imports = 2
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 15
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "*/migrat*/*" = [
   # Allow using PascalCase model names in migrations
   "N806",
