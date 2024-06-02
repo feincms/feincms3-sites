@@ -184,6 +184,10 @@ class AbstractPage(pages.AbstractPage):
         verbose_name = _("page")
         verbose_name_plural = _("pages")
 
+    def _set_parent(self, parent):
+        self.parent = parent
+        self.site = parent.site if parent else self.site
+
     def _clash_candidates(self):
         return super()._clash_candidates().filter(site=self.site_id)
 
