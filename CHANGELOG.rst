@@ -5,12 +5,18 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+
+0.21 (2024-06-03)
+~~~~~~~~~~~~~~~~~
+
 - Handle the case when a page's site and its parent's site do not match.
 - Added Python 3.12, Django 5.0.
 - Dropped support for Django before 4.2.
 - Changed the ``DefaultLanguageListFilter`` to use the model admin's default
   empty value display, and allowed filtering for sites where a default value
   isn't set.
+- Raised the minimum feincms3 version to 5.0 and added support for the new move
+  node interface.
 
 
 0.20 (2023-11-01)
