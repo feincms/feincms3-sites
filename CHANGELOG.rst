@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Added Python 3.13, Django 5.2a1.
+- Made the domain handling case insensitive.
+
 
 0.21 (2024-06-03)
 ~~~~~~~~~~~~~~~~~

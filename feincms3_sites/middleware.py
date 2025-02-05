@@ -27,7 +27,7 @@ from feincms3_sites.utils import get_site_model
 
 
 _current_site = contextvars.ContextVar("current_site", default=None)
-_sites = contextvars.ContextVar("sites", default={})
+_sites = contextvars.ContextVar("sites", default=None)
 
 
 def site_for_host(host, *, sites=None):
@@ -42,7 +42,7 @@ def site_for_host(host, *, sites=None):
         sites = get_site_model()._default_manager.active()
     default = None
     for site in sorted(sites, key=lambda site: (-site.is_default, site.pk)):
-        if re.search(site.host_re, host):
+        if re.search(site.host_re, host, re.I):
             return site
         elif site.is_default:
             default = site

@@ -465,6 +465,9 @@ class SiteMiddlewareTest(TestCase):
 
         self.assertEqual(self.client.get("/de/").status_code, 404)
 
+        response = self.client.get("/de/", headers={"host": "TestServer2"})
+        self.assertContains(response, "home - testapp")
+
 
 class CanonicalDomainMiddlewareTest(TestCase):
     def setUp(self):
