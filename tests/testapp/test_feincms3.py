@@ -783,7 +783,7 @@ class SiteModelTest(TestCase):
             Site.objects.create(host="testserver", is_default=True)
 
     def test_import_callable(self):
-        from math import ceil
+        from math import ceil  # noqa: PLC0415
 
         self.assertEqual(import_callable(ceil), ceil)
         self.assertEqual(import_callable("math.ceil"), ceil)

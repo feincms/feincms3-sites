@@ -222,7 +222,7 @@ class AbstractPage(pages.AbstractPage):
     @staticmethod
     def add_site_field(sender, **kwargs):
         if issubclass(sender, AbstractPage) and not sender._meta.abstract:
-            from feincms3_sites.utils import get_site_model
+            from feincms3_sites.utils import get_site_model  # noqa: PLC0415
 
             SiteForeignKey(
                 get_site_model(),
