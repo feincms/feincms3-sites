@@ -5,8 +5,10 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
-- Added Python 3.13, Django 5.2a1.
+- Added Python 3.13, Django 5.2, 6.0.
 - Made the domain handling case insensitive.
+- Fixed the handling of hosts with default HTTP and HTTPS ports explicitly
+  specified. Browsers do not do this, but other HTTP clients do.
 
 
 0.21 (2024-06-03)

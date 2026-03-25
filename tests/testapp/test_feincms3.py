@@ -469,6 +469,68 @@ class SiteMiddlewareTest(TestCase):
         self.assertContains(response, "home - testapp")
 
 
+@override_settings(
+    MIDDLEWARE=[
+        *settings.MIDDLEWARE_BASE,
+        "feincms3_sites.middleware.site_middleware",
+        "feincms3_sites.middleware.redirect_to_site_middleware",
+        "testapp.middleware.page_if_404_middleware",
+    ]
+)
+class PortHandlingTest(TestCase):
+    def setUp(self):
+        self.test_site = Site.objects.create(host="example.com", is_default=True)
+        Page.objects.create(
+            title="home",
+            slug="home",
+            path="/de/",
+            static_path=True,
+            language_code="de",
+            is_active=True,
+            site=self.test_site,
+        )
+
+    def test_site_for_host_strips_port_80(self):
+        # Make non-default so we verify regex match, not just default fallback
+        self.test_site.is_default = False
+        self.test_site.save()
+        self.assertEqual(site_for_host("example.com:80"), self.test_site)
+
+    def test_site_for_host_strips_port_443(self):
+        self.test_site.is_default = False
+        self.test_site.save()
+        self.assertEqual(site_for_host("example.com:443"), self.test_site)
+
+    def test_site_for_host_keeps_nonstandard_port(self):
+        # Port 8080 is not a default port and should not be stripped;
+        # without a default site there is no match.
+        self.test_site.is_default = False
+        self.test_site.save()
+        self.assertIsNone(site_for_host("example.com:8080"))
+
+    def test_middleware_port_80(self):
+        # A request with an explicit port 80 should match the site and not redirect
+        response = self.client.get("/de/", headers={"host": "example.com:80"})
+        self.assertContains(response, "home - testapp")
+
+    def test_middleware_port_443(self):
+        response = self.client.get(
+            "/de/", headers={"host": "example.com:443"}, secure=True
+        )
+        self.assertContains(response, "home - testapp")
+
+    def test_middleware_port_80_no_redirect(self):
+        # A request to example.com:80 should not be redirected to example.com
+        response = self.client.get("/de/", headers={"host": "example.com:80"})
+        self.assertEqual(response.status_code, 200)
+
+    def test_middleware_port_443_no_redirect(self):
+        response = self.client.get(
+            "/de/", headers={"host": "example.com:443"}, secure=True
+        )
+        self.assertEqual(response.status_code, 200)
+
+
 class CanonicalDomainMiddlewareTest(TestCase):
     def setUp(self):
         self.test_site = Site.objects.create(host="example.com", is_default=True)

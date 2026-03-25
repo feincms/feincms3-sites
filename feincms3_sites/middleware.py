@@ -30,14 +30,35 @@ _current_site = contextvars.ContextVar("current_site", default=None)
 _sites = contextvars.ContextVar("sites", default=None)
 
 
+def _strip_default_port(host):
+    """
+    Strip port 80 and 443 from a host string since they are the default ports
+    for HTTP and HTTPS respectively and are often omitted in site configurations.
+    """
+    if host.startswith("["):
+        # IPv6 address in brackets, e.g. [::1]:80
+        if host.endswith((":80", ":443")):
+            return host.rsplit(":", 1)[0]
+    elif ":" in host:
+        domain, port = host.rsplit(":", 1)
+        if port in ("80", "443"):
+            return domain
+    return host
+
+
 def site_for_host(host, *, sites=None):
     """
     Return a site instance for the passed host, or ``None`` if there is no
     match and no default site.
 
     The default site's host regex is tested first.
+
+    Port 80 and 443 are stripped from ``host`` before matching since they are
+    the default ports for HTTP and HTTPS and are typically not included in site
+    host configurations.
     """
 
+    host = _strip_default_port(host)
     if sites is None:
         sites = get_site_model()._default_manager.active()
     default = None
@@ -130,7 +151,7 @@ def redirect_to_site_middleware(get_response):
             )
 
         # Host matches, and either no HTTPS enforcement or already HTTPS
-        if request.get_host() == site.get_host() and (
+        if _strip_default_port(request.get_host()) == site.get_host() and (
             not settings.SECURE_SSL_REDIRECT or request.is_secure()
         ):
             return get_response(request)
