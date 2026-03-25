@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     "feincms3",
     "feincms3_sites",
     "content_editor",
+    "tree_queries",
 ]
 
 MEDIA_ROOT = "/media/"
