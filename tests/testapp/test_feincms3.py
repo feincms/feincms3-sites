@@ -530,6 +530,15 @@ class PortHandlingTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_site_for_host_strips_trailing_dot(self):
+        self.test_site.is_default = False
+        self.test_site.save()
+        self.assertEqual(site_for_host("example.com."), self.test_site)
+
+    def test_middleware_trailing_dot(self):
+        response = self.client.get("/de/", headers={"host": "example.com."})
+        self.assertContains(response, "home - testapp")
+
 
 class CanonicalDomainMiddlewareTest(TestCase):
     def setUp(self):
