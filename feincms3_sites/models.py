@@ -146,7 +146,7 @@ class SiteForeignKey(models.ForeignKey):
     """
 
     def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
+        name, _path, args, kwargs = super().deconstruct()
         return name, "django.db.models.ForeignKey", args, kwargs
 
     def formfield(self, **kwargs):
