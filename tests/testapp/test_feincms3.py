@@ -11,6 +11,7 @@ from feincms3.applications import NoReverseMatch, _del_apps_urlconf_cache, apps_
 from feincms3_sites.middleware import (
     _del_reverse_site_cache,
     build_absolute_uri,
+    current_site,
     set_current_site,
     set_sites,
     site_for_host,
@@ -250,6 +251,21 @@ class AppsMiddlewareTest(TestCase):
         # Apps on this site
         with set_current_site(page.site):
             self.assertEqual(apps_urlconf(), "urlconf_01c07a48384868b2300536767c9879e2")
+
+    def test_context_managers_reset_on_exception(self):
+        """set_current_site and set_sites restore state when an exception occurs"""
+        with self.assertRaises(ZeroDivisionError), set_current_site(self.test_site):
+            1 / 0  # noqa: B018
+        self.assertIsNone(current_site())
+
+        with (
+            self.assertRaises(ZeroDivisionError),
+            set_sites({self.test_site.pk: Site(host="example.com")}),
+        ):
+            1 / 0  # noqa: B018
+        self.assertEqual(
+            build_absolute_uri("/", site=self.test_site), "http://testserver/"
+        )
 
     def test_reverse_site_app_caching(self):
         """reverse_site_app caches URLconf module names and doesn't repeat queries"""

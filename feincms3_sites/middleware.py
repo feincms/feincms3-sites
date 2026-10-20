@@ -113,9 +113,11 @@ def reverse_site_app(*args, site, **kwargs):
 def set_current_site(site):
     token = _current_site.set(site)
     _del_apps_urlconf_cache()
-    yield
-    _current_site.reset(token)
-    _del_apps_urlconf_cache()
+    try:
+        yield
+    finally:
+        _current_site.reset(token)
+        _del_apps_urlconf_cache()
 
 
 def current_site():
@@ -125,8 +127,10 @@ def current_site():
 @contextmanager
 def set_sites(sites):
     token = _sites.set(sites)
-    yield
-    _sites.reset(token)
+    try:
+        yield
+    finally:
+        _sites.reset(token)
 
 
 def site_middleware(get_response):
