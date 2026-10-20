@@ -189,9 +189,10 @@ def default_language_middleware(get_response):
             prefixed_default_language,
         ) = is_language_prefix_patterns_used(urlconf)
 
-        language = None
-        if i18n_patterns_used:
-            language = get_language_from_path(request.path_info)
+        language_from_path = (
+            get_language_from_path(request.path_info) if i18n_patterns_used else None
+        )
+        language = language_from_path
         if language is None:
             language = site.default_language or get_language_from_request(request)
 
@@ -202,6 +203,7 @@ def default_language_middleware(get_response):
 
         if (
             response.status_code == 404
+            and not language_from_path
             and i18n_patterns_used
             and prefixed_default_language
         ):
