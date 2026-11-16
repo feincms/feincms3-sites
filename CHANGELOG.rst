@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+0.23 (2026-11-16)
+~~~~~~~~~~~~~~~~~
+
 - Fixed new pages whose path is already taken on their site: validation
   didn't notice (the site comes from the parent only when saving, and
   Django's unique check skips ``("site", "path")``), so saving failed with
