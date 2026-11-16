@@ -36,7 +36,7 @@ dynamic = [
 ]
 dependencies = [
   "django>=4.2",
-  "feincms3>=5",
+  "feincms3>=7.1",
 ]
 optional-dependencies.tests = [
   "coverage",

@@ -216,21 +216,6 @@ class AbstractPage(pages.AbstractPage):
             # 'site' into 'exclude' unconditionally.
             raise ValidationError(_("The site is required when creating root nodes."))
 
-        # Django's unique check skips ("site", "path") since the site isn't
-        # validated, and feincms3 before 7.1 doesn't check new pages.
-        if (
-            self._state.adding
-            and type(self)
-            ._default_manager.filter(site=self.site_id, path=self.path)
-            .exists()
-        ):
-            raise validation_error(
-                _("The page %(page)s's new path %(path)s would not be unique.")
-                % {"page": self, "path": self.path},
-                field="path",
-                exclude=exclude,
-            )
-
     def save(self, *args, **kwargs):
         if self.parent_id and self.parent.site_id:
             self.site_id = self.parent.site_id

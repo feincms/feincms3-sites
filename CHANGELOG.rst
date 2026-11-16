@@ -5,6 +5,9 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Raised the minimum feincms3 version to 7.1, which checks the paths of new
+  pages itself.
+
 0.23 (2026-11-16)
 ~~~~~~~~~~~~~~~~~
 
