@@ -5,6 +5,10 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Fixed new pages whose path is already taken on their site: validation
+  didn't notice (the site comes from the parent only when saving, and
+  Django's unique check skips ``("site", "path")``), so saving failed with
+  an ``IntegrityError``.
 - Dropped Python 3.9.
 
 0.22 (2026-10-20)

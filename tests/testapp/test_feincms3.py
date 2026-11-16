@@ -94,6 +94,30 @@ class AppsMiddlewareTest(TestCase):
         ):
             sub.full_clean()
 
+    def test_new_page_with_taken_path(self):
+        root = Page.objects.create(
+            title="bla", slug="bla", path="/de/", static_path=True, site=self.test_site
+        )
+        Page.objects.create(title="sub", slug="sub", parent=root)
+
+        page = Page(title="sub", slug="sub", parent=root, page_type="standard")
+        with self.assertRaisesRegex(ValidationError, r"/de/sub/ would not be unique"):
+            # The site and the path aren't form fields in the admin
+            page.full_clean(exclude=["site", "path"])
+        self.assertEqual(page.site, self.test_site)
+
+        # The same path on another site is fine
+        other_root = Page.objects.create(
+            title="bla",
+            slug="bla",
+            path="/de/",
+            static_path=True,
+            site=Site.objects.create(host="testserver3"),
+        )
+        Page(
+            title="sub", slug="sub", parent=other_root, page_type="standard"
+        ).full_clean(exclude=["site", "path"])
+
     def test_root_without_site(self):
         """Create a root page without selecting a site instance should show
         validation errors"""
